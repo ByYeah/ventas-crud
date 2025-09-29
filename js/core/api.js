@@ -41,11 +41,11 @@ export class ApiService {
       url += `&startDate=${params.startDate || ''}&endDate=${params.endDate || ''}`;
     }
 
-    console.log('Fetching URL:', url);  // ← Agregar esto
+    console.log('Fetching URL:', url); 
 
     const response = await this.fetchWithTimeout(url);
 
-    console.log('API Response:', response);  // ← Agregar esto
+    console.log('API Response:', response); 
 
     if (!response || !response.data || !Array.isArray(response.data)) {
       throw new Error('Formato de respuesta no válido');
@@ -60,7 +60,6 @@ export class ApiService {
   }
 
   async sendVenta(data) {
-    // Agregar marca de tiempo única para evitar duplicados
     const ventaData = {
       ...data,
       _uniqueId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -72,7 +71,7 @@ export class ApiService {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Target-URL': CONFIG.GAS_URL,
-        'X-Request-ID': ventaData._uniqueId // Cabecera única
+        'X-Request-ID': ventaData._uniqueId
       },
       body: JSON.stringify(ventaData)
     };

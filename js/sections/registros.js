@@ -88,76 +88,81 @@ export class RegistrosManager {
   }
 
   formatTime(timeInput) {
-    if (!timeInput) return "-";
+  if (!timeInput) return "-";
 
-    // Caso 1: Si ya es una hora formateada (HH:mm:ss)
-    if (typeof timeInput === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(timeInput)) {
-      return timeInput;
-    }
+  // Caso 1: Si ya es una hora formateada (HH:mm:ss)
+  if (typeof timeInput === 'string' && /^\d{2}:\d{2}:\d{2}$/.test(timeInput)) {
+    return timeInput;
+  }
 
-    // Caso 2: Si es un timestamp numérico (ej: 1745931860000)
-    if (typeof timeInput === 'number') {
-      const date = new Date(timeInput);
-      if (!isNaN(date.getTime())) {
-        return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-      }
-    }
-
-    // Caso 3: Si es un objeto Date o string ISO (ej: "Sat Dec 30 1899 13:04:00 GMT-0456")
+  // Caso 2: Si es un timestamp numérico (ej: 1745931860000)
+  if (typeof timeInput === 'number') {
     const date = new Date(timeInput);
     if (!isNaN(date.getTime())) {
       return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
     }
-
-    // Caso 4: Si es un string de hora suelto (ej: "13:04:00")
-    if (typeof timeInput === 'string' && timeInput.includes(':')) {
-      const [hours, minutes, seconds] = timeInput.split(':');
-      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
-    }
-
-    return "-"; // Valor por defecto si no se puede parsear
   }
+
+  // Caso 3: Si es un objeto Date o string ISO (ej: "Sat Dec 30 1899 13:04:00 GMT-0456")
+  const date = new Date(timeInput);
+  if (!isNaN(date.getTime())) {
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+  }
+
+  // Caso 4: Si es un string de hora suelto (ej: "13:04:00")
+  if (typeof timeInput === 'string' && timeInput.includes(':')) {
+    const [hours, minutes, seconds] = timeInput.split(':');
+    // Validar que cada parte exista
+    return `${(hours || '00').padStart(2, '0')}:${(minutes || '00').padStart(2, '0')}:${(seconds || '00').padStart(2, '0')}`;
+  }
+
+  return "-"; // Valor por defecto si no se puede parsear
+}
 
 
   async filtrarRegistros() {
-    const fechaInicio = this.elements.fechaInicio.value;
-    const fechaFin = this.elements.fechaFin.value || fechaInicio;
+  const fechaInicio = this.elements.fechaInicio.value;
+  const fechaFin = this.elements.fechaFin.value || fechaInicio;
 
-    if (!fechaInicio) {
-      this.ui.showAlert('Seleccione al menos una fecha de inicio', 'warning');
-      return;
-    }
-
-    try {
-      this.ui.showLoading();
-
-      // Usar el backend para filtrar por fechas
-      const response = await this.api.fetchVentas({
-        startDate: fechaInicio,
-        endDate: fechaFin
-      });
-
-      this.filteredRegistros = response.data.map(item => ({
-        id: item[0],
-        producto: item[1],
-        referencia: item[2],
-        descripcion: item[3],
-        precio: item[4],
-        precioFinal: item[5],
-        fecha: this.formatDate(item[6]),
-        hora: this.formatTime(item[7])
-      }));
-
-      this.currentPage = 1;
-      this.updateTotalRegistros();
-      this.renderizarRegistros();
-      this.ui.hideLoading();
-    } catch (error) {
-      console.error('Error filtrando registros:', error);
-      this.ui.showAlert('Error al filtrar registros', 'error');
-      this.ui.hideLoading();
-    }
+  if (!fechaInicio) {
+    this.ui.showAlert('Seleccione al menos una fecha de inicio', 'warning');
+    return;
   }
+
+  try {
+    this.ui.showLoading();
+
+    // Usar el backend para filtrar por fechas
+    const response = await this.api.fetchVentas({
+      startDate: fechaInicio,
+      endDate: fechaFin
+    });
+
+    console.log('Respuesta del backend:', response.data);
+    console.log('Fechas en la respuesta:', response.data.map(item => item[6]));
+
+    // Asegurarte de que esta línea reemplaza completamente los registros filtrados
+    this.filteredRegistros = response.data.map(item => ({
+      id: item[0],
+      producto: item[1],
+      referencia: item[2],
+      descripcion: item[3],
+      precio: item[4],
+      precioFinal: item[5],
+      fecha: this.formatDate(item[6]),  // ← Aquí se formatea la fecha
+      hora: this.formatTime(item[7])
+    }));
+
+    this.currentPage = 1;
+    this.updateTotalRegistros();
+    this.renderizarRegistros();
+    this.ui.hideLoading();
+  } catch (error) {
+    console.error('Error filtrando registros:', error);
+    this.ui.showAlert('Error al filtrar registros', 'error');
+    this.ui.hideLoading();
+  }
+}
 
   limpiarFiltros() {
     this.elements.fechaInicio.value = '';

@@ -1,7 +1,7 @@
 // Configuración global de la aplicación
 export const CONFIG = {
   // URLs de API
-  GAS_URL: "https://script.google.com/macros/s/AKfycbxZIPBOwj9LXVThkQkhYJcsTYEFccgEJlsOH3UyrgMg64axY3mFLU3qVxVXMiJI2zt4IQ/exec",
+  GAS_URL: "https://script.google.com/macros/s/AKfycbw7-2-QAxbhehwaQhf7ZMnvBWzQUZagQjOUqTUslsgHUYuBNR4bbN3V_NkRbKanQA-UFA/exec",
   PROXY_URL: "https://proxy-gas.srbyyeah.workers.dev/",
   CONNECTION_CHECK_URL: "https://httpbin.org/get",
   
