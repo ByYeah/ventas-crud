@@ -311,6 +311,14 @@ table td {
   margin-bottom: 3px;
 }
 
+.icon-filtro{
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 10px;
+  margin-bottom: 3px;
+}
+
 .icon-buscar{
   width: 20px;
   height: 20px;
@@ -451,23 +459,42 @@ table td {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.filtro-fecha {
+.filtros-controles {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
+  justify-content: flex-start; /* Alinear todo al inicio */
 }
 
-.filtro-fecha label {
-  font-weight: 500;
-  color: #555;
+.filtro-acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto; /* Empuja este bloque a la derecha */
 }
+
 
 .total-registros {
   text-align: right;
   font-weight: 500;
   color: #555;
+}
+
+.filtros-separador {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 1rem 0;
+}
+
+.filtros-aplicados {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 30px; /* Espacio para los chips */
+}
+
+.chips-container {
+  flex-grow: 1; /* Ocupa el espacio disponible */
 }
 
 .date-picker {
@@ -476,6 +503,7 @@ table td {
   border-radius: 4px;
   font-size: 1rem;
 }
+
 
 .btn-primary, .btn-secondary {
   padding: 0.5rem 1rem;
@@ -573,4 +601,79 @@ table td {
   background-color: #45a049;
   transform: scale(1.05);
   transition: all 0.3s ease;
+}
+
+/* Estilos para el dropdown de filtros */
+.filtro-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+  padding: 8px 0;
+  left: 0; /* Alineado a la izquierda del botón */
+  right: auto;
+}
+
+.filtro-dropdown-container:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Ajuste para que el botón de filtros tenga un tamaño similar a los demás */
+#btn-filtros {
+  padding: 0.5rem;
+  width: 110px; /* Ancho fijo */
+  height: 40px; /* Alto fijo (igual a otros botones) */
+  justify-content: center; /* Centrar contenido */
+  box-sizing: border-box;
+}
+
+/* Submenú */
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-submenu-content {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: -8px; /* Alinear con el item padre */
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-radius: 4px;
+  padding: 8px 0;
+}
+
+.dropdown-submenu:hover .dropdown-submenu-content {
+  display: block;
+}
+
+.arrow-right {
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(-45deg);
+  float: right;
+  margin-top: 5px;
 }

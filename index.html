@@ -149,54 +149,91 @@
 
     <section id="registros" class="section hidden">
       <div class="filtros-container">
-        <div class="filtro-fecha">
+        <div class="filtros-controles">
           <label for="fecha-inicio">Fecha Inicio:</label>
           <input type="date" id="fecha-inicio" class="date-picker">
 
           <label for="fecha-fin">Fecha Fin:</label>
           <input type="date" id="fecha-fin" class="date-picker">
 
-          <button id="btn-buscar" class="btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-limpiar">
-              <g fill="#fff">
-                <path
-                  d="M20.3133 11.1566c0 5.0571-4.0996 9.1567-9.1567 9.1567C6.09956 20.3133 2 16.2137 2 11.1566 2 6.09956 6.09956 2 11.1566 2c5.0571 0 9.1567 4.09956 9.1567 9.1566Z" />
-                <path fill-rule="evenodd"
-                  d="M18.8382 18.8382c.2823-.2823.7401-.2823 1.0224 0l1.9277 1.9277c.2823.2824.2823.7401 0 1.0224s-.74.2823-1.0224 0l-1.9277-1.9277c-.2823-.2823-.2823-.7401 0-1.0224Z"
-                  clip-rule="evenodd" />
-              </g>
-            </svg>
-            Buscar
-          </button>
-          <button id="btn-limpiar" class="btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-buscar">
-              <g fill="#000">
-                <path
-                  d="M3 6.38597c0-.48445.34538-.87718.77143-.87718l2.66424-.00047c.52935-.01526.99635-.39799 1.17647-.9642.00474-.01489.01018-.03325.02971-.09988l.1148-.39168c.07025-.24015.13145-.44938.2171-.63639.33834-.73881.96433-1.25185 1.68772-1.3832.1831-.03325.37703-.03311.59963-.03295h3.478c.2226-.00016.4165-.0003.5996.03295.7234.13135 1.3494.64439 1.6877 1.3832.0857.18701.1469.39624.2171.63639l.1148.39168c.0195.06663.025.08499.0297.09988.1802.56621.7398.94941 1.2691.96467h2.5715c.426 0 .7714.39273.7714.87718 0 .48446-.3454.87719-.7714.87719H3.77143C3.34538 7.26316 3 6.87043 3 6.38597Z" />
-                <path fill-rule="evenodd"
-                  d="M11.5956 22.0001h.8088c2.7827 0 4.1741 0 5.0787-.8859.9047-.8859.9972-2.3391 1.1823-5.2456l.2667-4.1879c.1005-1.577.1507-2.36546-.3032-2.86512-.4538-.49966-1.2202-.49966-2.7529-.49966H8.12404c-1.53277 0-2.29916 0-2.75299.49966-.45383.49966-.40361 1.28812-.30317 2.86512l.26671 4.1879c.18511 2.9065.27766 4.3597 1.1823 5.2456.90464.8859 2.296.8859 5.07871.8859Zm-1.3493-9.8115c-.0412-.4338-.40877-.7504-.82093-.707-.41216.0434-.71286.4303-.67165.8641l.5 5.2632c.04122.4338.40875.7504.82088.707.4122-.0434.7129-.4303.6717-.8641l-.5-5.2632Zm4.3283-.707c.4122.0434.7129.4303.6717.8641l-.5 5.2632c-.0412.4338-.4088.7504-.8209.707-.4122-.0434-.7129-.4303-.6717-.8641l.5-5.2632c.0412-.4338.4088-.7504.8209-.707Z"
-                  clip-rule="evenodd" />
-              </g>
-            </svg>
-            Limpiar
-          </button>
-          <button id="btn-exportar" class="btn-export">
+          <div class="filtro-dropdown-container">
+            <button id="btn-filtros" class="btn-secondary"> <!-- Botón de Filtros -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-filtro">
+                <g fill="#000">
+                  <path d="M3 4h18v2.862l-6.938 6.937V20l-4.125 2V13.799L3 6.862V4Z"/>
+                </g>
+              </svg>
+              Filtros
+            </button>
+            <div id="filtros-dropdown" class="dropdown-content">
+              <div class="dropdown-submenu">
+                <a href="#">Por producto <span class="arrow-right"></span></a>
+                <div class="dropdown-submenu-content">
+                  <a href="#" data-filtro="producto" data-valor="Gorra">Gorra</a>
+                  <a href="#" data-filtro="producto" data-valor="Pantaloneta">Pantaloneta</a>
+                  <a href="#" data-filtro="producto" data-valor="Cortaviento">Cortaviento</a>
+                  <a href="#" data-filtro="producto" data-valor="Camiseta">Camiseta</a>
+                  <a href="#" data-filtro="producto" data-valor="Buzo">Buzo</a>
+                  <a href="#" data-filtro="producto" data-valor="Chaqueta">Chaqueta</a>
+                </div>
+              </div>
+              <div class="dropdown-submenu">
+                <a href="#">Por estado <span class="arrow-right"></span></a>
+                <div class="dropdown-submenu-content">
+                  <a href="#" data-filtro="estado" data-valor="liquidado">Liquidado</a>
+                  <a href="#" data-filtro="estado" data-valor="sin-liquidar">Sin liquidar</a>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-export">
-              <g fill="#ffffff">
-                <path fill-rule="evenodd"
-                  d="M12 1.25c-.4142 0-.75.33579-.75.75v10.9726l-1.68056-1.9607c-.26956-.3145-.74304-.3509-1.05753-.0813-.3145.2695-.35092.743-.08135 1.0575l3.00004 3.5c.1424.1662.3505.2619.5694.2619.2189 0 .427-.0957.5694-.2619l3-3.5c.2696-.3145.2332-.788-.0813-1.0575-.3145-.2696-.788-.2332-1.0575.0813L12.75 12.9726V2c0-.41421-.3358-.75-.75-.75Z"
-                  clip-rule="evenodd" />
-                <path
-                  d="M14.25 9v.37828c.7336-.25855 1.5812-.12918 2.2142.41339.9435.80873 1.0528 2.22913.2441 3.17263l-3 3.5c-.4275.4987-1.0515.7857-1.7083.7857-.6569 0-1.2809-.287-1.7084-.7857l-2.99997-3.5c-.8087-.9435-.69943-2.3639.24405-3.17263.633-.54257 1.48069-.67194 2.21428-.41339V9H8c-2.82843 0-4.24264 0-5.12132.87868C2 10.7574 2 12.1716 2 15v1c0 2.8284 0 4.2426.87868 5.1213C3.75736 22 5.17157 22 7.99999 22H16c2.8284 0 4.2426 0 5.1213-.8787C22 20.2426 22 18.8284 22 16v-1c0-2.8284 0-4.2426-.8787-5.12132C20.2426 9 18.8284 9 16 9h-1.75Z" />
-              </g>
-            </svg>
-            Exportar CSV
+          <button id="btn-buscar" class="btn-primary"> <!-- Botón de Buscar -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-buscar">
+                <g fill="#fff">
+                  <path
+                    d="M20.3133 11.1566c0 5.0571-4.0996 9.1567-9.1567 9.1567C6.09956 20.3133 2 16.2137 2 11.1566 2 6.09956 6.09956 2 11.1566 2c5.0571 0 9.1567 4.09956 9.1567 9.1566Z" />
+                  <path fill-rule="evenodd"
+                    d="M18.8382 18.8382c.2823-.2823.7401-.2823 1.0224 0l1.9277 1.9277c.2823.2824.2823.7401 0 1.0224s-.74.2823-1.0224 0l-1.9277-1.9277c-.2823-.2823-.2823-.7401 0-1.0224Z"
+                    clip-rule="evenodd" />
+                </g>
+              </svg>
+              Buscar
           </button>
+          <button id="btn-limpiar" class="btn-secondary"> <!-- Botón de Limpiar -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-limpiar">
+                <g fill="#000">
+                  <path
+                    d="M3 6.38597c0-.48445.34538-.87718.77143-.87718l2.66424-.00047c.52935-.01526.99635-.39799 1.17647-.9642.00474-.01489.01018-.03325.02971-.09988l.1148-.39168c.07025-.24015.13145-.44938.2171-.63639.33834-.73881.96433-1.25185 1.68772-1.3832.1831-.03325.37703-.03311.59963-.03295h3.478c.2226-.00016.4165-.0003.5996.03295.7234.13135 1.3494.64439 1.6877 1.3832.0857.18701.1469.39624.2171.63639l.1148.39168c.0195.06663.025.08499.0297.09988.1802.56621.7398.94941 1.2691.96467h2.5715c.426 0 .7714.39273.7714.87718 0 .48446-.3454.87719-.7714.87719H3.77143C3.34538 7.26316 3 6.87043 3 6.38597Z" />
+                  <path fill-rule="evenodd"
+                    d="M11.5956 22.0001h.8088c2.7827 0 4.1741 0 5.0787-.8859.9047-.8859.9972-2.3391 1.1823-5.2456l.2667-4.1879c.1005-1.577.1507-2.36546-.3032-2.86512-.4538-.49966-1.2202-.49966-2.7529-.49966H8.12404c-1.53277 0-2.29916 0-2.75299.49966-.45383.49966-.40361 1.28812-.30317 2.86512l.26671 4.1879c.18511 2.9065.27766 4.3597 1.1823 5.2456.90464.8859 2.296.8859 5.07871.8859Zm-1.3493-9.8115c-.0412-.4338-.40877-.7504-.82093-.707-.41216.0434-.71286.4303-.67165.8641l.5 5.2632c.04122.4338.40875.7504.82088.707.4122-.0434.7129-.4303.6717-.8641l-.5-5.2632Zm4.3283-.707c.4122.0434.7129.4303.6717.8641l-.5 5.2632c-.0412.4338-.4088.7504-.8209.707-.4122-.0434-.7129-.4303-.6717-.8641l.5-5.2632c.0412-.4338.4088-.7504.8209-.707Z"
+                    clip-rule="evenodd" />
+                </g>
+              </svg>
+              Limpiar
+          </button>
+          <div class="filtro-acciones"> <!-- Contenedor solo para el botón de exportar -->
+            <button id="btn-exportar" class="btn-export"> <!-- Botón de Exportar -->
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-export">
+                <g fill="#ffffff">
+                  <path fill-rule="evenodd"
+                    d="M12 1.25c-.4142 0-.75.33579-.75.75v10.9726l-1.68056-1.9607c-.26956-.3145-.74304-.3509-1.05753-.0813-.3145.2695-.35092.743-.08135 1.0575l3.00004 3.5c.1424.1662.3505.2619.5694.2619.2189 0 .427-.0957.5694-.2619l3-3.5c.2696-.3145.2332-.788-.0813-1.0575-.3145-.2696-.788-.2332-1.0575.0813L12.75 12.9726V2c0-.41421-.3358-.75-.75-.75Z"
+                    clip-rule="evenodd" />
+                  <path
+                    d="M14.25 9v.37828c.7336-.25855 1.5812-.12918 2.2142.41339.9435.80873 1.0528 2.22913.2441 3.17263l-3 3.5c-.4275.4987-1.0515.7857-1.7083.7857-.6569 0-1.2809-.287-1.7084-.7857l-2.99997-3.5c-.8087-.9435-.69943-2.3639.24405-3.17263.633-.54257 1.48069-.67194 2.21428-.41339V9H8c-2.82843 0-4.24264 0-5.12132.87868C2 10.7574 2 12.1716 2 15v1c0 2.8284 0 4.2426.87868 5.1213C3.75736 22 5.17157 22 7.99999 22H16c2.8284 0 4.2426 0 5.1213-.8787C22 20.2426 22 18.8284 22 16v-1c0-2.8284 0-4.2426-.8787-5.12132C20.2426 9 18.8284 9 16 9h-1.75Z" />
+                </g>
+              </svg>
+              Exportar CSV
+            </button>
+          </div>
         </div>
-        <div class="total-registros">
-          Total: <span id="total-registros">0</span> registros
+
+        <div class="filtros-separador"></div>
+
+        <div class="filtros-aplicados">
+          <div class="chips-container"><!-- Espacio para futuros chips de filtros --></div>
+          <div class="total-registros">Total: <span id="total-registros">0</span> registros</div>
         </div>
+
       </div>
 
       <div class="table-container">

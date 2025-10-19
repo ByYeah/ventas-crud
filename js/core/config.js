@@ -16,7 +16,7 @@ export const CONFIG = {
   
   // Configuración de paginación
   PAGINATION: {
-    registrosPorPagina: 10,
+    registrosPorPagina: 12,
     maxPagesToShow: 5
   },
   
