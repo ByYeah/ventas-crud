@@ -16,7 +16,9 @@ export class RegistrosManager {
     this.initElements();
     this.bindEvents();
     this.filtrosProductoSeleccionados = new Set();
-    this.filtroEstadoSeleccionado = ''; // 'liquidado', 'sin-liquidar', o ''
+    this.filtroEstadoSeleccionado = '';
+    this.cleanupTimeout = null;
+    this.isCurrentSection = false;
   }
 
   initElements() {
@@ -79,6 +81,16 @@ export class RegistrosManager {
         }
       });
     }
+  }
+
+  onSectionShow() {
+    this.isCurrentSection = true;
+    this.clearCleanupTimeout(); // Cancelar limpieza si estaba programada
+  }
+
+  onSectionHide() {
+    this.isCurrentSection = false;
+    this.scheduleDataCleanup();
   }
 
   filtrarPorFechaEnFrontend(data, startDateStr, endDateStr) {
@@ -431,5 +443,39 @@ export class RegistrosManager {
         this.aplicarFiltrosLocales();
       });
     });
+  }
+
+  scheduleDataCleanup() {
+    this.clearCleanupTimeout();
+    this.cleanupTimeout = setTimeout(() => {
+      if (!this.isCurrentSection) {
+        this.clearAllData();
+      }
+    }, 60 * 1000); // 60 segundos
+  }
+
+  clearCleanupTimeout() {
+    if (this.cleanupTimeout) {
+      clearTimeout(this.cleanupTimeout);
+      this.cleanupTimeout = null;
+    }
+  }
+
+  clearAllData() {
+    this.registros = [];
+    this.filteredRegistros = [];
+    this.filtrosProductoSeleccionados.clear();
+    this.filtroEstadoSeleccionado = '';
+    this.currentPage = 1;
+
+    // Limpiar UI
+    if (this.elements.tableBody) this.elements.tableBody.innerHTML = '';
+    if (this.elements.chipsContainer) this.elements.chipsContainer.innerHTML = '';
+    if (this.elements.totalRegistros) this.elements.totalRegistros.textContent = '0';
+    if (this.elements.totalVendido) this.elements.totalVendido.textContent = '0';
+
+    // Limpiar inputs de fecha
+    if (this.elements.fechaInicio) this.elements.fechaInicio.value = '';
+    if (this.elements.fechaFin) this.elements.fechaFin.value = '';
   }
 }

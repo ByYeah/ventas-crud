@@ -54,6 +54,13 @@ class App {
 
   // Manejo de secciones
   showSection(id) {
+    // Notificar al manager de la sección actual que se oculta
+    if (this.state.currentSection && this.managers[this.state.currentSection]) {
+      const currentManager = this.managers[this.state.currentSection];
+      if (typeof currentManager.onSectionHide === 'function') {
+        currentManager.onSectionHide();
+      }
+    }
     // Ocultar todas las secciones
     document.querySelectorAll(".section").forEach(section => {
       section.classList.remove("active");
