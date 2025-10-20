@@ -15,6 +15,8 @@ export class RegistrosManager {
     this.registrosPerPage = CONFIG.PAGINATION.registrosPorPagina;
     this.initElements();
     this.bindEvents();
+    this.filtrosProductoSeleccionados = new Set();
+    this.filtroEstadoSeleccionado = ''; // 'liquidado', 'sin-liquidar', o ''
   }
 
   initElements() {
@@ -27,7 +29,12 @@ export class RegistrosManager {
       btnSiguiente: document.getElementById('btn-siguiente'),
       paginaActual: document.getElementById('pagina-actual'),
       tableBody: document.querySelector('#registrosTable tbody'),
-      totalRegistros: document.getElementById('total-registros')
+      totalRegistros: document.getElementById('total-registros'),
+      chipsContainer: document.querySelector('.chips-container'),
+      totalRegistros: document.getElementById('total-registros'),
+      loadingOverlay: document.getElementById('loading-overlay'),
+      totalRegistros: document.getElementById('total-registros'),
+      totalVendido: document.getElementById('total-vendido')
     };
   }
 
@@ -41,52 +48,36 @@ export class RegistrosManager {
     const today = new Date().toISOString().split('T')[0];
     this.elements.fechaInicio.max = today;
     this.elements.fechaFin.max = today;
-  }
 
-  async onSectionShow() {
-    if (this.registros.length === 0) {
-      await this.cargarRegistros();
-    }
-    this.renderizarRegistros();
-  }
+    const dropdown = document.getElementById('filtros-dropdown');
+    if (dropdown) {
+      dropdown.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A' && e.target.hasAttribute('data-filtro')) {
+          e.preventDefault();
+          const filtro = e.target.dataset.filtro;
+          const valor = e.target.dataset.valor;
 
-  async cargarRegistros() {
-    try {
-      this.ui.showLoading();
+          if (filtro === 'producto') {
+            // Alternar selección: si ya está, quitarlo; si no, añadirlo (máx 3)
+            if (this.filtrosProductoSeleccionados.has(valor)) {
+              this.filtrosProductoSeleccionados.delete(valor);
+            } else {
+              if (this.filtrosProductoSeleccionados.size < 3) {
+                this.filtrosProductoSeleccionados.add(valor);
+              } else {
+                this.ui.showAlert('Máximo 3 productos permitidos', 'warning');
+                return;
+              }
+            }
+          } else if (filtro === 'estado') {
+            // Para estado, sigue siendo exclusivo (solo uno)
+            this.filtroEstadoSeleccionado =
+              this.filtroEstadoSeleccionado === valor ? '' : valor;
+          }
 
-      const response = await this.api.fetchVentas();
-
-      // OBTENER FECHAS DEL FORMULARIO
-      const startDate = document.getElementById('startDate')?.value;
-      const endDate = document.getElementById('endDate')?.value;
-
-      let filteredData = response.data;
-
-      // FILTRAR EN EL FRONTEND ANTES DE TRANSFORMAR
-      if (startDate && endDate) {
-        filteredData = this.filtrarPorFechaEnFrontend(response.data, startDate, endDate);
-        console.log('Fechas filtradas en frontend:', filteredData.map(r => r[6]));
-      }
-
-      // TRANSFORMAR LOS DATOS FILTRADOS
-      this.registros = filteredData.map(item => ({
-        id: item[0],
-        producto: item[1],
-        referencia: item[2],
-        descripcion: item[3],
-        precio: item[4],
-        precioFinal: item[5],
-        fecha: this.formatDate(item[6]), // Esto convierte a DD/MM/YYYY
-        hora: this.formatTime(item[7])
-      }));
-
-      this.filteredRegistros = [...this.registros];
-      this.updateTotalRegistros();
-      this.ui.hideLoading();
-    } catch (error) {
-      console.error('Error cargando registros:', error);
-      this.ui.showAlert('Error al cargar registros', 'error');
-      this.ui.hideLoading();
+          this.aplicarFiltrosLocales();
+        }
+      });
     }
   }
 
@@ -212,68 +203,59 @@ export class RegistrosManager {
 
     try {
       this.ui.showLoading();
+      this.elements.loadingOverlay.style.display = 'flex';
 
-      // Usar el backend para filtrar por fechas
       const response = await this.api.fetchVentas({
         startDate: fechaInicio,
         endDate: fechaFin
       });
 
-      console.log('Respuesta del backend:', response);
-
-      // Validar que response.data sea un array
       if (!Array.isArray(response.data)) {
-        console.error('response.data no es un array:', response.data);
-        this.ui.showAlert('Error: respuesta inválida del servidor', 'error');
-        this.ui.hideLoading();
-        return;
+        throw new Error('Respuesta inválida del servidor');
       }
 
-      console.log('Fechas en la respuesta:', response.data.map(item => item[6]));
-
-      // Transformar los datos filtrados
-      const registrosTransformados = response.data.map(item => ({
+      //Transformar TODOS los registros del rango de fechas
+      this.registros = response.data.map(item => ({
         id: item[0],
         producto: item[1],
         referencia: item[2],
         descripcion: item[3],
         precio: item[4],
         precioFinal: item[5],
-        fecha: this.formatDate(item[6]),  // ← Aquí se formatea la fecha
-        hora: this.formatTime(item[7])
+        fecha: this.formatDate(item[6]),
+        hora: this.formatTime(item[7]),
+        liquidado: item[8] || 'No'
       }));
 
-      console.log('Registros transformados:', registrosTransformados.map(r => r.fecha));
+      //Aplicar filtros locales (producto + estado)
+      this.aplicarFiltrosLocales();
 
-      // FILTRO EN EL FRONTEND DESPUÉS DE TRANSFORMAR
-      const filteredRegistros = registrosTransformados.filter(item => {
-        const [day, month, year] = item.fecha.split('/');
-        const fechaISO = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-        const dentroRango = fechaISO >= fechaInicio && fechaISO <= fechaFin;
-        console.log(`Fecha: ${item.fecha} -> ${fechaISO}, Dentro de rango: ${dentroRango}`);
-        return dentroRango;
-      });
-
-      console.log('Registros filtrados después de transformar:', filteredRegistros.map(r => r.fecha));
-
-      this.filteredRegistros = filteredRegistros;
-      this.currentPage = 1;
-      this.updateTotalRegistros();
-      this.renderizarRegistros();
+      this.elements.loadingOverlay.style.display = 'none';
       this.ui.hideLoading();
     } catch (error) {
       console.error('Error filtrando registros:', error);
       this.ui.showAlert('Error al filtrar registros', 'error');
+      this.elements.loadingOverlay.style.display = 'none';
       this.ui.hideLoading();
     }
   }
+
   limpiarFiltros() {
+    if (this.registros.length === 0) {
+      // No hay datos para limpiar
+      return;
+    }
+
     this.elements.fechaInicio.value = '';
     this.elements.fechaFin.value = '';
+    this.filtrosProductoSeleccionados.clear();
+    this.filtroEstadoSeleccionado = '';
+
     this.filteredRegistros = [...this.registros];
     this.currentPage = 1;
-    this.updateTotalRegistros();
+    this.calcularTotales();
     this.renderizarRegistros();
+    this.renderizarChips();
   }
 
   renderizarRegistros() {
@@ -287,6 +269,11 @@ export class RegistrosManager {
 
     registrosPagina.forEach(registro => {
       const row = document.createElement('tr');
+
+      if (registro.liquidado === 'Si') {
+        row.classList.add('fila-liquidada');
+      }
+
       row.innerHTML = `
         <td>${registro.id}</td>
         <td>${registro.producto}</td>
@@ -311,9 +298,17 @@ export class RegistrosManager {
     this.elements.paginaActual.textContent = this.currentPage;
   }
 
-  updateTotalRegistros() {
+  calcularTotales() {
+    const totalRegistros = this.filteredRegistros.length;
+    const totalVendido = this.filteredRegistros.reduce((suma, reg) => {
+      return suma + (parseFloat(reg.precioFinal) || 0);
+    }, 0);
+
     if (this.elements.totalRegistros) {
-      this.elements.totalRegistros.textContent = this.filteredRegistros.length;
+      this.elements.totalRegistros.textContent = totalRegistros;
+    }
+    if (this.elements.totalVendido) {
+      this.elements.totalVendido.textContent = this.utils.formatCurrency(totalVendido);
     }
   }
 
@@ -362,5 +357,79 @@ export class RegistrosManager {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  aplicarFiltrosLocales() {
+    let filtrados = [...this.registros];
+
+    // Filtro por productos seleccionados (múltiples)
+    if (this.filtrosProductoSeleccionados.size > 0) {
+      const productos = Array.from(this.filtrosProductoSeleccionados);
+      filtrados = filtrados.filter(reg => productos.includes(reg.producto));
+    }
+
+    // Filtro por estado (liquidado / sin-liquidar)
+    if (this.filtroEstadoSeleccionado) {
+      const esperado = this.filtroEstadoSeleccionado === 'liquidado' ? 'Si' : 'No';
+      filtrados = filtrados.filter(reg => reg.liquidado === esperado);
+    }
+
+    this.filteredRegistros = filtrados;
+    this.currentPage = 1;
+    this.calcularTotales();
+    this.renderizarRegistros();
+    this.renderizarChips();
+  }
+
+  renderizarChips() {
+    if (!this.elements.chipsContainer) return;
+
+    const chips = [];
+
+    // Chips de productos
+    this.filtrosProductoSeleccionados.forEach(producto => {
+      chips.push({
+        tipo: 'producto',
+        valor: producto,
+        etiqueta: `Producto: ${producto}`
+      });
+    });
+
+    // Chip de estado
+    if (this.filtroEstadoSeleccionado) {
+      const etiqueta = this.filtroEstadoSeleccionado === 'liquidado'
+        ? 'Estado: Liquidado'
+        : 'Estado: Sin liquidar';
+      chips.push({
+        tipo: 'estado',
+        valor: this.filtroEstadoSeleccionado,
+        etiqueta
+      });
+    }
+
+    this.elements.chipsContainer.innerHTML = chips.map(chip => `
+    <span class="filtro-chip" data-tipo="${chip.tipo}" data-valor="${chip.valor}">
+      ${chip.etiqueta}
+      <button type="button" class="chip-remove" aria-label="Eliminar filtro">×</button>
+    </span>
+  `).join('');
+
+    // Eventos de eliminación
+    this.elements.chipsContainer.querySelectorAll('.chip-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const chip = btn.closest('.filtro-chip');
+        const tipo = chip.dataset.tipo;
+        const valor = chip.dataset.valor;
+
+        if (tipo === 'producto') {
+          this.filtrosProductoSeleccionados.delete(valor);
+        } else if (tipo === 'estado') {
+          this.filtroEstadoSeleccionado = '';
+        }
+
+        this.aplicarFiltrosLocales();
+      });
+    });
   }
 }

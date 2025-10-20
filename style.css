@@ -128,7 +128,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .section-title {
@@ -160,7 +160,7 @@ form {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 form label {
@@ -230,7 +230,7 @@ table {
   border-collapse: collapse;
   background: #fff;
   margin-top: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-radius: 20px;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
@@ -247,7 +247,7 @@ table td {
   border-radius: 20px;
 }
 
-.icon-dinero{
+.icon-dinero {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -255,7 +255,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-registros{
+.icon-registros {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -263,7 +263,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-referencias{
+.icon-referencias {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -271,7 +271,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-graficos{
+.icon-graficos {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -279,7 +279,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-reportar{
+.icon-reportar {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -287,7 +287,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-acerca{
+.icon-acerca {
   width: 26px;
   height: 26px;
   vertical-align: middle;
@@ -295,7 +295,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-export{
+.icon-export {
   width: 20px;
   height: 20px;
   vertical-align: middle;
@@ -303,7 +303,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-limpiar{
+.icon-limpiar {
   width: 20px;
   height: 20px;
   vertical-align: middle;
@@ -311,7 +311,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-filtro{
+.icon-filtro {
   width: 20px;
   height: 20px;
   vertical-align: middle;
@@ -319,7 +319,7 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-buscar{
+.icon-buscar {
   width: 20px;
   height: 20px;
   vertical-align: middle;
@@ -335,31 +335,31 @@ table td {
     position: relative;
     padding: 1rem;
   }
-  
+
   .content {
     margin-left: 0;
   }
-  
+
   .menu {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
-  
+
   .menu li {
     flex: 1 0 calc(50% - 8px);
   }
-  
+
   .menu button {
     text-align: center;
     padding: 10px;
   }
-  
+
   .inline-fields {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   table {
     display: block;
     overflow-x: auto;
@@ -372,15 +372,15 @@ table td {
     align-items: flex-start;
     padding: 1rem;
   }
-  
+
   .brand {
     margin-top: 0.5rem;
   }
-  
+
   .form-buttons {
     flex-direction: column;
   }
-  
+
   .menu li {
     flex: 1 0 100%;
   }
@@ -434,10 +434,11 @@ table td {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#ventasTable th, #ventasTable td {
+#ventasTable th,
+#ventasTable td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -456,28 +457,34 @@ table td {
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filtros-controles {
   display: flex;
   align-items: center;
   gap: 1rem;
-  justify-content: flex-start; /* Alinear todo al inicio */
+  justify-content: flex-start;
 }
 
 .filtro-acciones {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-left: auto; /* Empuja este bloque a la derecha */
+  margin-left: auto;
 }
-
 
 .total-registros {
   text-align: right;
   font-weight: 500;
   color: #555;
+}
+
+.total-resumen {
+  display: flex;
+  gap: 20px;
+  font-size: 18px;
+  color: #495057;
 }
 
 .filtros-separador {
@@ -490,11 +497,11 @@ table td {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 30px; /* Espacio para los chips */
+  min-height: 30px;
 }
 
 .chips-container {
-  flex-grow: 1; /* Ocupa el espacio disponible */
+  flex-grow: 1;
 }
 
 .date-picker {
@@ -505,7 +512,8 @@ table td {
 }
 
 
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
@@ -535,7 +543,7 @@ table td {
   background-color: #b6b5b5;
   transform: scale(1.05);
   transition: all 0.3s ease;
-} 
+}
 
 /* Estilos para la tabla de registros */
 .table-container {
@@ -544,7 +552,7 @@ table td {
   overflow-x: auto;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #registrosTable {
@@ -552,7 +560,8 @@ table td {
   border-collapse: collapse;
 }
 
-#registrosTable th, #registrosTable td {
+#registrosTable th,
+#registrosTable td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -614,11 +623,12 @@ table td {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 180px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
   padding: 8px 0;
-  left: 0; /* Alineado a la izquierda del botón */
+  left: 0;
+  /* Alineado a la izquierda del botón */
   right: auto;
 }
 
@@ -641,9 +651,12 @@ table td {
 /* Ajuste para que el botón de filtros tenga un tamaño similar a los demás */
 #btn-filtros {
   padding: 0.5rem;
-  width: 110px; /* Ancho fijo */
-  height: 40px; /* Alto fijo (igual a otros botones) */
-  justify-content: center; /* Centrar contenido */
+  width: 110px;
+  /* Ancho fijo */
+  height: 40px;
+  /* Alto fijo (igual a otros botones) */
+  justify-content: center;
+  /* Centrar contenido */
   box-sizing: border-box;
 }
 
@@ -656,10 +669,11 @@ table td {
   display: none;
   position: absolute;
   left: 100%;
-  top: -8px; /* Alinear con el item padre */
+  top: -8px;
+  /* Alinear con el item padre */
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   padding: 8px 0;
 }
@@ -676,4 +690,94 @@ table td {
   transform: rotate(-45deg);
   float: right;
   margin-top: 5px;
+}
+
+/* Fila con registro ya liquidado */
+.fila-liquidada {
+  background-color: rgba(255, 200, 200, 0.2);
+  /* Rojo muy tenue y semitransparente */
+}
+
+.filtros-aplicados {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chips-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 28px;
+}
+
+.filtro-chip {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 16px;
+  padding: 4px 12px 4px 12px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-chip .chip-remove {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.filtro-chip .chip-remove:hover {
+  background-color: #dee2e6;
+  color: #495057;
+}
+
+/** Loader registro **/
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: 8px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

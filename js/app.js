@@ -64,12 +64,12 @@ class App {
     if (targetSection) {
       targetSection.classList.add("active");
       this.state.currentSection = id;
-      
+
       // Actualizar título del header
       this.updateHeaderTitle(id);
-      
+
       // Inicializar sección si es necesario
-      if (this.managers[id]) {
+      if (this.managers[id] && typeof this.managers[id].onSectionShow === 'function') {
         this.managers[id].onSectionShow();
       }
     }
