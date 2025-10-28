@@ -33,7 +33,7 @@ export const SECTION_TITLES = {
   vender: "Ventas",
   registros: "Registros",
   referencias: "Referencias",
-  graficos: "Gráficos"
+  liquidaciones: "Liquidaciones"
 };
 
 // Estilos

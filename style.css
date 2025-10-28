@@ -271,11 +271,12 @@ table td {
   margin-bottom: 3px;
 }
 
-.icon-graficos {
-  width: 26px;
-  height: 26px;
-  vertical-align: middle;
-  margin-right: 10px;
+.icon-liquidaciones {
+  width: 29px;
+  height: 29px;
+  vertical-align: middle;;
+  margin-right: 6px;
+  margin-top: 4px;
   margin-bottom: 3px;
 }
 

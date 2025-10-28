@@ -5,8 +5,8 @@ import { UIUtils } from './core/ui.js';
 import { Utils } from './core/utils.js';
 import { VentasManager } from './sections/ventas.js';
 import { RegistrosManager } from './sections/registros.js';
-import { ReferenciasManager } from './sections/referencias.js';
-import { GraficosManager } from './sections/graficos.js';
+import { ReferenciasManager } from './sections/referencias.js';;
+import { LiquidacionesManager } from './sections/liquidaciones.js';
 
 // Clase principal de la aplicación
 class App {
@@ -21,7 +21,7 @@ class App {
       vender: new VentasManager(this),
       registros: new RegistrosManager(this),
       referencias: new ReferenciasManager(this),
-      graficos: new GraficosManager(this)
+      liquidaciones: new LiquidacionesManager(this)
     };
 
     // Inicializar servicios
