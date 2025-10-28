@@ -141,7 +141,56 @@
     </section>
 
     <section id="liquidaciones" class="section hidden">
-      <p>No disponible por ahora.</p>
+      <div class="liquidacion-container">
+    <!-- Parte Superior: Liquidación -->
+    <div class="liquidacion-top">
+      <h3>📊 Liquidación</h3>
+      
+      <div class="fecha-seleccion">
+        <div class="fecha-inputs">
+          <label for="fecha-inicio-liqui">Fecha Inicial:</label>
+          <input type="date" id="fecha-inicio-liqui" class="date-picker">
+
+          <label for="fecha-fin-liqui">Fecha Final:</label>
+          <input type="date" id="fecha-fin-liqui" class="date-picker">
+        </div>
+
+        <div class="resumen-liquidacion">
+          <div class="resumen-item">
+            <span>Fecha inicial seleccionada:</span>
+            <span id="fecha-inicio-display">-</span>
+          </div>
+          <div class="resumen-item">
+            <span>Fecha final seleccionada:</span>
+            <span id="fecha-fin-display">-</span>
+          </div>
+          <div class="resumen-item">
+            <span>Total valor:</span>
+            <span id="total-valor-liqui">0</span>
+          </div>
+          <div class="resumen-item">
+            <span>Total registros:</span>
+            <span id="total-registros-liqui">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="acciones-liquidacion">
+        <button id="btn-confirmar-liqui" class="btn-primary">Confirmar Liquidación</button>
+        <button id="btn-cancelar-liqui" class="btn-secondary">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Parte Inferior: Edición y Eliminación -->
+    <div class="liquidacion-bottom">
+      <h3>✏️ Edición y Eliminación</h3>
+      <div class="edicion-contenido">
+        <!-- Aquí irá la tabla de registros para editar/eliminar -->
+        <!-- Por ahora, dejamos un espacio vacío -->
+        <p>Sección de edición y eliminación. En desarrollo...</p>
+      </div>
+    </div>
+  </div>
     </section>
 
     <section id="referencias" class="section hidden">

@@ -114,3 +114,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const app = new App();
   app.init();
 });
+
+// Establecer fecha máxima y valor por defecto para Fecha Final
+document.addEventListener('DOMContentLoaded', () => {
+  const fechaFinInput = document.getElementById('fecha-fin-liqui');
+  if (fechaFinInput) {
+    const today = new Date().toISOString().split('T')[0];
+    fechaFinInput.value = today;
+    fechaFinInput.max = today;
+  }
+});
