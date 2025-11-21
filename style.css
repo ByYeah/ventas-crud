@@ -792,30 +792,43 @@ table td {
   flex-direction: column;
   gap: 20px;
   padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+  background-color: #ffffff;
+  /* Fondo blanco puro */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Parte superior: Liquidación */
 .liquidacion-top {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .liquidacion-top h3 {
   margin-top: 0;
   color: #333;
+  font-size: 18px;
+  font-weight: 600;
   border-bottom: 2px solid #007bff;
   padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liquidacion-top h3::before {
+  font-size: 20px;
 }
 
 /* Selección de fechas */
 .fecha-seleccion {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
   margin-bottom: 20px;
 }
@@ -823,30 +836,42 @@ table td {
 .fecha-inputs {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .fecha-inputs label {
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 4px;
-}
-
-.fecha-inputs input[type="date"] {
-  padding: 8px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  color: #495057;
   font-size: 14px;
 }
 
+.fecha-inputs input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+}
+
+.fecha-inputs input[type="date"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Resumen de liquidación */
 .resumen-liquidacion {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   align-items: center;
-  background-color: #e9ecef;
-  padding: 15px;
-  border-radius: 6px;
-  margin-top: 10px;
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  margin-top: 16px;
 }
 
 .resumen-item {
@@ -854,67 +879,162 @@ table td {
   align-items: center;
   gap: 8px;
   font-size: 14px;
+  color: #495057;
 }
 
 .resumen-item span:first-child {
-  font-weight: bold;
-  color: #495057;
+  font-weight: 600;
+  color: #333;
 }
 
 .resumen-item span:last-child {
   font-weight: bold;
   color: #007bff;
+  background-color: #e3f2fd;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 /* Acciones de liquidación */
 .acciones-liquidacion {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
 .acciones-liquidacion button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-.acciones-liquidacion .btn-primary {
+.acciones-liquidacion .btn-primary-l {
   background-color: #007bff;
   color: white;
 }
 
-.acciones-liquidacion .btn-secondary {
+.acciones-liquidacion .btn-primary-l:hover {
+  background-color: #0056b3;
+}
+
+.acciones-liquidacion .btn-secondary-l {
   background-color: #6c757d;
   color: white;
 }
 
-/* Parte inferior: Edición y Eliminación */
-.liquidacion-bottom {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.liquidacion-bottom h3 {
-  margin-top: 0;
-  color: #333;
-  border-bottom: 2px solid #28a745;
-  padding-bottom: 8px;
+.acciones-liquidacion .btn-secondary-l:hover {
+  background-color: #545b62;
 }
 
 .edicion-contenido {
   padding: 20px;
   background-color: #f8f9fa;
-  border-radius: 6px;
+  border-radius: 8px;
   min-height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #6c757d;
   font-style: italic;
+  border: 1px dashed #dee2e6;
+}
+
+/* Estilos adicionales para que los inputs y botones tengan un look moderno */
+.date-picker {
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.btn-primary-l,
+.btn-secondary-l {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary-l {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary-l {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Para que el contenedor de fecha tenga un estilo de calendario simple */
+.fecha-inputs .date-picker {
+  width: 100%;
+  max-width: 200px;
+}
+
+/* Vista previa de registros */
+.registros-preview {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-top: 0;
+}
+
+.registros-preview h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid #ffc107;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.registros-preview h3::before {
+  font-size: 20px;
+}
+
+#liquidacionTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+#liquidacionTable th,
+#liquidacionTable td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+#liquidacionTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+#liquidacionTable tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+#liquidacionTable td {
+  color: #333;
+}
+
+.preview-footer {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6c757d;
+  text-align: right;
 }

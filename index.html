@@ -43,7 +43,8 @@
           Registros
         </button></li>
       <li><button data-target="liquidaciones">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#fff" viewBox="0 0 24 24" class="icon-liquidaciones"> 
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#fff" viewBox="0 0 24 24"
+            class="icon-liquidaciones">
             <path fill="red" fill-rule="evenodd"
               d="M2.123 12.816c.287 1.003 1.06 1.775 2.605 3.32l1.83 1.83C9.248 20.657 10.592 22 12.262 22c1.671 0 3.015-1.345 5.704-4.034C20.657 15.277 22 13.933 22 12.262c0-1.67-1.345-3.015-4.034-5.704l-1.83-1.83c-1.545-1.545-2.317-2.318-3.32-2.605-1.003-.288-2.068-.042-4.197.45l-1.228.283c-1.792.413-2.688.62-3.302 1.233-.613.614-.82 1.51-1.233 3.302l-.284 1.228c-.491 2.13-.737 3.194-.45 4.197Zm8-5.545a2.017 2.017 0 1 1-2.852 2.852 2.017 2.017 0 0 1 2.852-2.852Zm8.928 4.78-6.979 6.98a.75.75 0 0 1-1.06-1.061l6.978-6.98a.75.75 0 0 1 1.061 1.061Z"
               clip-rule="evenodd" />
@@ -142,55 +143,72 @@
 
     <section id="liquidaciones" class="section hidden">
       <div class="liquidacion-container">
-    <!-- Parte Superior: Liquidación -->
-    <div class="liquidacion-top">
-      <h3>📊 Liquidación</h3>
-      
-      <div class="fecha-seleccion">
-        <div class="fecha-inputs">
-          <label for="fecha-inicio-liqui">Fecha Inicial:</label>
-          <input type="date" id="fecha-inicio-liqui" class="date-picker">
+        <!-- Parte Superior: Configuración y resumen -->
+        <div class="liquidacion-top">
+          <h3>📊 Liquidación</h3>
 
-          <label for="fecha-fin-liqui">Fecha Final:</label>
-          <input type="date" id="fecha-fin-liqui" class="date-picker">
+          <div class="fecha-seleccion">
+            <div class="fecha-inputs">
+              <label for="fecha-inicio-liqui">Fecha Inicial:</label>
+              <input type="date" id="fecha-inicio-liqui" class="date-picker">
+
+              <label for="fecha-fin-liqui">Fecha Final:</label>
+              <input type="date" id="fecha-fin-liqui" class="date-picker">
+            </div>
+
+            <div class="resumen-liquidacion">
+              <div class="resumen-item">
+                <span>Fecha inicial:</span>
+                <span id="fecha-inicio-display">-</span>
+              </div>
+              <div class="resumen-item">
+                <span>Fecha final:</span>
+                <span id="fecha-fin-display">-</span>
+              </div>
+              <div class="resumen-item">
+                <span>Total registros:</span>
+                <span id="total-registros-liqui">0</span>
+              </div>
+              <div class="resumen-item">
+                <span>Total valor:</span>
+                <span id="total-valor-liqui">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="acciones-liquidacion">
+            <button id="btn-confirmar-liqui" class="btn-primary-l">Confirmar Liquidación</button>
+            <button id="btn-cancelar-liqui" class="btn-secondary-l">Cancelar</button>
+          </div>
         </div>
 
-        <div class="resumen-liquidacion">
-          <div class="resumen-item">
-            <span>Fecha inicial seleccionada:</span>
-            <span id="fecha-inicio-display">-</span>
+        <!-- Parte Inferior: Vista previa de registros -->
+        <div class="registros-preview">
+          <h3>📋 Registros pendientes en el rango seleccionado</h3>
+
+          <div class="table-container">
+            <table id="liquidacionTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Producto</th>
+                  <th>Referencia</th>
+                  <th>Precio Final</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                </tr>
+              </thead>
+              <tbody id="liquidacionTableBody">
+                <!-- Registros dinámicos aquí -->
+              </tbody>
+            </table>
           </div>
-          <div class="resumen-item">
-            <span>Fecha final seleccionada:</span>
-            <span id="fecha-fin-display">-</span>
-          </div>
-          <div class="resumen-item">
-            <span>Total valor:</span>
-            <span id="total-valor-liqui">0</span>
-          </div>
-          <div class="resumen-item">
-            <span>Total registros:</span>
-            <span id="total-registros-liqui">0</span>
+
+          <div class="preview-footer">
+            <span id="preview-count">0 registros mostrados</span>
           </div>
         </div>
       </div>
-
-      <div class="acciones-liquidacion">
-        <button id="btn-confirmar-liqui" class="btn-primary">Confirmar Liquidación</button>
-        <button id="btn-cancelar-liqui" class="btn-secondary">Cancelar</button>
-      </div>
-    </div>
-
-    <!-- Parte Inferior: Edición y Eliminación -->
-    <div class="liquidacion-bottom">
-      <h3>✏️ Edición y Eliminación</h3>
-      <div class="edicion-contenido">
-        <!-- Aquí irá la tabla de registros para editar/eliminar -->
-        <!-- Por ahora, dejamos un espacio vacío -->
-        <p>Sección de edición y eliminación. En desarrollo...</p>
-      </div>
-    </div>
-  </div>
     </section>
 
     <section id="referencias" class="section hidden">
