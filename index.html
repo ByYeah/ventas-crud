@@ -142,71 +142,76 @@
     </section>
 
     <section id="liquidaciones" class="section hidden">
-      <div class="liquidacion-container">
-        <!-- Parte Superior: Configuración y resumen -->
-        <div class="liquidacion-top">
-          <h3>📊 Liquidación</h3>
+      <div id="seccion-liquidacion" class="seccion-contenido">
+        <div class="encabezado-seccion">
+          <h2>Liquidación de Ventas</h2>
+          <p>Gestiona la liquidación masiva de registros pendientes</p>
+        </div>
 
-          <div class="fecha-seleccion">
-            <div class="fecha-inputs">
-              <label for="fecha-inicio-liqui">Fecha Inicial:</label>
-              <input type="date" id="fecha-inicio-liqui" class="date-picker">
-
-              <label for="fecha-fin-liqui">Fecha Final:</label>
-              <input type="date" id="fecha-fin-liqui" class="date-picker">
+        <div class="filtro-liquidacion">
+          <div class="filtros-fecha">
+            <div class="filtro-item">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="fecha-inicio-liqui">
+              <span id="fecha-inicio-display" class="fecha-display">-</span>
             </div>
 
-            <div class="resumen-liquidacion">
-              <div class="resumen-item">
-                <span>Fecha inicial:</span>
-                <span id="fecha-inicio-display">-</span>
-              </div>
-              <div class="resumen-item">
-                <span>Fecha final:</span>
-                <span id="fecha-fin-display">-</span>
-              </div>
-              <div class="resumen-item">
-                <span>Total registros:</span>
-                <span id="total-registros-liqui">0</span>
-              </div>
-              <div class="resumen-item">
-                <span>Total valor:</span>
-                <span id="total-valor-liqui">0</span>
-              </div>
+            <div class="filtro-item">
+              <label>Fecha Fin:</label>
+              <input type="date" id="fecha-fin-liqui">
+              <span id="fecha-fin-display" class="fecha-display">-</span>
             </div>
-          </div>
-
-          <div class="acciones-liquidacion">
-            <button id="btn-confirmar-liqui" class="btn-primary-l">Confirmar Liquidación</button>
-            <button id="btn-cancelar-liqui" class="btn-secondary-l">Cancelar</button>
           </div>
         </div>
 
-        <!-- Parte Inferior: Vista previa de registros -->
-        <div class="registros-preview">
-          <h3>📋 Registros pendientes en el rango seleccionado</h3>
+        <div class="resumen-liquidacion">
+          <div class="card-resumen">
+            <h4>Resumen de Liquidación</h4>
+            <div class="resumen-item">
+              <span>Total Registros:</span>
+              <strong id="total-registros-liqui">0</strong>
+            </div>
+            <div class="resumen-item">
+              <span>Valor Total:</span>
+              <strong id="total-valor-liqui">$0</strong>
+            </div>
+          </div>
+        </div>
 
-          <div class="table-container">
-            <table id="liquidacionTable">
+        <div class="vista-previa-liquidacion">
+          <h4>Vista Previa de Registros a Liquidar</h4>
+          <div class="contador-vista-previa">
+            <span id="preview-count">0 registros pendientes</span>
+          </div>
+          <div class="tabla-responsive">
+            <table class="tabla-datos">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Producto</th>
                   <th>Referencia</th>
-                  <th>Precio Final</th>
+                  <th>Valor</th>
                   <th>Fecha</th>
                   <th>Hora</th>
                 </tr>
               </thead>
               <tbody id="liquidacionTableBody">
-                <!-- Registros dinámicos aquí -->
+                <tr>
+                  <td colspan="6" style="text-align:center; color:#6c757d">No hay registros pendientes en este rango
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
+        </div>
 
-          <div class="preview-footer">
-            <span id="preview-count">0 registros mostrados</span>
-          </div>
+        <div class="acciones-liquidacion">
+          <button id="btn-cancelar-liqui" class="btn btn-terciario">
+            Cancelar
+          </button>
+          <button id="btn-confirmar-liqui" class="btn btn-secundario">
+            Confirmar Liquidación
+          </button>
         </div>
       </div>
     </section>

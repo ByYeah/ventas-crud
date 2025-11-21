@@ -70,6 +70,41 @@ export class LiquidacionesManager {
     return `${d}/${m}/${y}`;
   }
 
+  // Formatear hora para mostrarla en formato amigable
+  formatoHoraAmigable(hora) {
+    // Manejar el formato inconsistente de Google Sheets
+    if (!hora) return '-';
+
+    if (typeof hora === 'string') {
+      // Si ya es formato HH:mm:ss, mantenerlo
+      if (/^\d{2}:\d{2}:\d{2}$/.test(hora)) {
+        return hora;
+      }
+      // Si es formato HH:mm, añadir segundos
+      if (/^\d{2}:\d{2}$/.test(hora)) {
+        return hora + ':00';
+      }
+      // Si contiene fecha completa, extraer solo hora
+      if (hora.includes('GMT') || hora.includes('T')) {
+        try {
+          const date = new Date(hora);
+          if (!isNaN(date.getTime())) {
+            return date.toLocaleTimeString('es-CO', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false
+            });
+          }
+        } catch (e) {
+          console.warn('Error al formatear hora:', hora);
+        }
+      }
+    }
+
+    return hora.toString();
+  }
+
   // Calcular total registros y valor para el rango
   async calcularResumenLiquidacion() {
     const inicio = this.elements.fechaInicioLiqui.value;
@@ -87,9 +122,11 @@ export class LiquidacionesManager {
     try {
       this.ui.showLoading();
 
+      // Añadir filtro de estado "No liquidado"
       const response = await this.api.fetchVentas({
         startDate: inicio,
-        endDate: fin
+        endDate: fin,
+        liquidado: 'No' // Solo registros no liquidados
       });
 
       if (!Array.isArray(response.data)) {
@@ -103,11 +140,11 @@ export class LiquidacionesManager {
         referencia: item[2] || '-',
         precioFinal: parseFloat(item[5]) || 0,
         fecha: this.formatDateForDisplay(item[6]),
-        hora: item[7] || '-',
+        hora: this.formatoHoraAmigable(item[7]),
         liquidado: (item[8] || 'No').toString().trim()
       }));
 
-      // Filtrar solo NO liquidadas
+      // Filtrar solo NO liquidadas (ya se hace con el filtro, pero por si acaso)
       const pendientes = registros.filter(r => r.liquidado === 'No');
 
       const totalRegistros = pendientes.length;
@@ -158,21 +195,24 @@ export class LiquidacionesManager {
     try {
       this.ui.showLoading();
 
-      // Endpoint futuro: /liquidar (por ahora simulamos)
-      // const response = await this.api.post('/liquidar', { ids: this.registrosParaLiquidar });
+      // Llamar al endpoint real de liquidación
+      const response = await this.api.post('/liquidar', {
+        ids: this.registrosParaLiquidar
+      });
 
-      // Por ahora, simulamos éxito
-      await new Promise(resolve => setTimeout(resolve, 800));
+      if (response.status === 'success') {
+        this.ui.showAlert(`✅ ${response.actualizados} registros liquidados exitosamente`, 'success');
 
-      this.ui.showAlert(`✅ ${this.registrosParaLiquidar.length} registros liquidados exitosamente`, 'success');
-
-      // Limpiar y recalcular
-      this.registrosParaLiquidar = [];
-      this.calcularResumenLiquidacion();
+        // Limpiar y recalcular
+        this.registrosParaLiquidar = [];
+        this.calcularResumenLiquidacion();
+      } else {
+        throw new Error(response.message || 'Error en la liquidación');
+      }
 
     } catch (error) {
       console.error('Error al confirmar liquidación:', error);
-      this.ui.showAlert('Error al procesar la liquidación', 'error');
+      this.ui.showAlert('Error al procesar la liquidación: ' + error.message, 'error');
     } finally {
       this.ui.hideLoading();
     }
