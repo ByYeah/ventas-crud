@@ -41,25 +41,57 @@ export class ApiService {
       url += `&startDate=${params.startDate || ''}&endDate=${params.endDate || ''}`;
     }
 
-    console.log('Fetching URL:', url); 
+    // Añadir otros parámetros si existen
+    if (params.liquidado !== undefined) {
+      url += `&liquidado=${params.liquidado}`;
+    }
+    if (params.producto) {
+      url += `&producto=${encodeURIComponent(params.producto)}`;
+    }
+
+    console.log('Fetching URL:', url);
 
     const response = await this.fetchWithTimeout(url);
 
-    console.log('API Response:', response); 
+    console.log('API Response:', response);
 
+    // El response ya es directamente el array de datos
     if (!response || !response.data || !Array.isArray(response.data)) {
       throw new Error('Formato de respuesta no válido');
     }
 
     return {
       data: response.data.map(row => {
-        while (row.length < 8) row.push('');
+        while (row.length < 9) row.push(''); // Asegurar 9 columnas (ahora incluye liquidado)
+        return row;
+      })
+    };
+  }
+
+  // Nuevo método para obtener los últimos N registros
+  async fetchUltimosVentas(limite = 5) {
+    const url = `${this.baseUrl}?target=${encodeURIComponent(CONFIG.GAS_URL)}&path=ultimos&limite=${limite}`;
+
+    console.log('Fetching últimos URL:', url);
+
+    const response = await this.fetchWithTimeout(url);
+
+    console.log('API Últimos Response:', response);
+
+    if (!response || !response.data || !Array.isArray(response.data)) {
+      throw new Error('Formato de respuesta no válido para últimos registros');
+    }
+
+    return {
+      data: response.data.map(row => {
+        while (row.length < 9) row.push(''); // Asegurar 9 columnas
         return row;
       })
     };
   }
 
   async sendVenta(data) {
+    // Para registrar venta, usar el endpoint base sin path
     const ventaData = {
       ...data,
       _uniqueId: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -70,13 +102,35 @@ export class ApiService {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Target-URL': CONFIG.GAS_URL,
-        'X-Request-ID': ventaData._uniqueId
+        'Target-URL': CONFIG.GAS_URL
       },
       body: JSON.stringify(ventaData)
     };
 
-    return await this.fetchWithTimeout(this.baseUrl, options);
+    // Usar el URL base para ventas (sin path)
+    const url = `${this.baseUrl}?target=${encodeURIComponent(CONFIG.GAS_URL)}`;
+
+    return await this.fetchWithTimeout(url, options);
+  }
+
+  // Nuevo método para hacer POST requests con rutas
+  async post(endpoint, data) {
+    const url = `${this.baseUrl}?target=${encodeURIComponent(CONFIG.GAS_URL)}&path=${endpoint.substring(1)}`; // Remover / inicial
+
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Target-URL': CONFIG.GAS_URL
+      },
+      body: JSON.stringify(data)
+    };
+
+    console.log('POST URL:', url);
+    console.log('POST Data:', data);
+
+    return await this.fetchWithTimeout(url, options);
   }
 
   async checkConnection() {

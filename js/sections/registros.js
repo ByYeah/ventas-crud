@@ -33,9 +33,7 @@ export class RegistrosManager {
       tableBody: document.querySelector('#registrosTable tbody'),
       totalRegistros: document.getElementById('total-registros'),
       chipsContainer: document.querySelector('.chips-container'),
-      totalRegistros: document.getElementById('total-registros'),
       loadingOverlay: document.getElementById('loading-overlay'),
-      totalRegistros: document.getElementById('total-registros'),
       totalVendido: document.getElementById('total-vendido')
     };
   }
@@ -93,6 +91,105 @@ export class RegistrosManager {
     this.scheduleDataCleanup();
   }
 
+  // Método robusto para normalizar fechas (maneja tanto strings como objetos Date)
+  normalizeDate(dateInput) {
+    if (!dateInput) return null;
+
+    // Si ya es un objeto Date, devolverlo directamente
+    if (dateInput instanceof Date) {
+      return dateInput;
+    }
+
+    // Si es string con formato YYYY-MM-DD
+    if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+      // Crear fecha en UTC para evitar desfases horarios
+      const [year, month, day] = dateInput.split('-');
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    // Si es string con formato DD/MM/YYYY
+    if (typeof dateInput === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(dateInput)) {
+      const [day, month, year] = dateInput.split('/');
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    // Si es string con formato MM/DD/YYYY (formato Google Sheets por defecto)
+    if (typeof dateInput === 'string' && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateInput)) {
+      const [month, day, year] = dateInput.split('/');
+      return new Date(Date.UTC(year, month - 1, day));
+    }
+
+    // Intentar parsear como string de fecha
+    const parsedDate = new Date(dateInput);
+    if (!isNaN(parsedDate.getTime())) {
+      return parsedDate;
+    }
+
+    // Si nada funciona, intentar convertir cualquier string numérico
+    if (typeof dateInput === 'string' && /^\d+$/.test(dateInput)) {
+      // Si es un número, podría ser un timestamp
+      const timestamp = parseInt(dateInput);
+      if (!isNaN(timestamp)) {
+        return new Date(timestamp);
+      }
+    }
+
+    return null;
+  }
+
+  // Método para formatear fecha a YYYY-MM-DD para comparaciones
+  formatToISO(date) {
+    if (!date || !(date instanceof Date)) return '';
+    
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  }
+
+  // Método para formatear fecha a DD/MM/YYYY para mostrar
+  formatToDisplay(date) {
+    if (!date || !(date instanceof Date)) return '-';
+    
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    
+    return `${day}/${month}/${year}`;
+  }
+
+  // Método específico para comparar fechas en el filtro
+  compareDates(fechaOriginal, startDateStr, endDateStr) {
+    // Si es string y tiene formato YYYY-MM-DD, usarlo directamente
+    if (typeof fechaOriginal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fechaOriginal)) {
+      return fechaOriginal >= startDateStr && fechaOriginal <= endDateStr;
+    }
+
+    // Si es string con formato DD/MM/YYYY
+    if (typeof fechaOriginal === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(fechaOriginal)) {
+      const [day, month, year] = fechaOriginal.split('/');
+      const fechaISO = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      return fechaISO >= startDateStr && fechaISO <= endDateStr;
+    }
+
+    // Si es objeto Date, convertir a ISO
+    if (fechaOriginal instanceof Date) {
+      const fechaISO = this.formatToISO(fechaOriginal);
+      return fechaISO >= startDateStr && fechaISO <= endDateStr;
+    }
+
+    // Si es cualquier otro formato, intentar parsear
+    const normalizedDate = this.normalizeDate(fechaOriginal);
+    if (normalizedDate) {
+      const fechaISO = this.formatToISO(normalizedDate);
+      return fechaISO >= startDateStr && fechaISO <= endDateStr;
+    }
+
+    // Si nada funciona, ignorar la fila
+    return false;
+  }
+
   filtrarPorFechaEnFrontend(data, startDateStr, endDateStr) {
     // Validar que data sea un array
     if (!Array.isArray(data)) {
@@ -101,74 +198,16 @@ export class RegistrosManager {
     }
 
     return data.filter(row => {
-      let fechaOriginal = row[6]; // Fecha está en la columna 6
-
-      // Validar que exista
-      if (fechaOriginal == null) {
-        console.warn('Fecha es null o undefined:', row);
-        return false;
-      }
-
-      let fechaISO = null;
-
-      // Si es objeto Date
-      if (fechaOriginal instanceof Date) {
-        const year = fechaOriginal.getFullYear();
-        const month = (fechaOriginal.getMonth() + 1).toString().padStart(2, '0');
-        const day = fechaOriginal.getDate().toString().padStart(2, '0');
-        fechaISO = `${year}-${month}-${day}`;
-      }
-      // Si es string con formato DD/MM/YYYY
-      else if (typeof fechaOriginal === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(fechaOriginal)) {
-        const [day, month, year] = fechaOriginal.split('/');
-        fechaISO = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      }
-      // Si es string con formato YYYY-MM-DD
-      else if (typeof fechaOriginal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(fechaOriginal)) {
-        fechaISO = fechaOriginal;
-      }
-      // Si es cualquier otro formato, intentar parsear
-      else {
-        const date = new Date(fechaOriginal);
-        if (isNaN(date.getTime())) {
-          console.warn('Fecha no válida:', fechaOriginal);
-          return false;
-        }
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        fechaISO = `${year}-${month}-${day}`;
-      }
-
-      // Comparar con el rango
-      return fechaISO >= startDateStr && fechaISO <= endDateStr;
+      const fechaOriginal = row[6]; // Fecha está en la columna 6
+      
+      // Usar el método específico para comparación
+      return this.compareDates(fechaOriginal, startDateStr, endDateStr);
     });
   }
 
   formatDate(dateInput) {
-    if (!dateInput) return "-";
-
-    // Si ya es DD/MM/YYYY, devolver tal cual
-    if (typeof dateInput === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(dateInput)) {
-      return dateInput;
-    }
-
-    let date;
-
-    // Si es YYYY-MM-DD, crear fecha sin desfase
-    if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
-      // Crear fecha en UTC para evitar desfases
-      const [year, month, day] = dateInput.split('-');
-      date = new Date(Date.UTC(year, month - 1, day));
-    } else {
-      // Para otros formatos, usar el constructor normal
-      date = new Date(dateInput);
-    }
-
-    if (isNaN(date.getTime())) return "-";
-
-    // Formatear en formato DD/MM/YYYY
-    return `${date.getUTCDate().toString().padStart(2, '0')}/${(date.getUTCMonth() + 1).toString().padStart(2, '0')}/${date.getUTCFullYear()}`;
+    const normalizedDate = this.normalizeDate(dateInput);
+    return this.formatToDisplay(normalizedDate);
   }
 
   formatTime(timeInput) {
@@ -203,7 +242,6 @@ export class RegistrosManager {
     return "-"; // Valor por defecto si no se puede parsear
   }
 
-
   async filtrarRegistros() {
     const fechaInicio = this.elements.fechaInicio.value;
     const fechaFin = this.elements.fechaFin.value || fechaInicio;
@@ -222,24 +260,31 @@ export class RegistrosManager {
         endDate: fechaFin
       });
 
-      if (!Array.isArray(response.data)) {
+      if (!Array.isArray(response.data)) { // Extraer data del response
         throw new Error('Respuesta inválida del servidor');
       }
 
-      //Transformar TODOS los registros del rango de fechas
-      this.registros = response.data.map(item => ({
-        id: item[0],
-        producto: item[1],
-        referencia: item[2],
-        descripcion: item[3],
-        precio: item[4],
-        precioFinal: item[5],
-        fecha: this.formatDate(item[6]),
-        hora: this.formatTime(item[7]),
-        liquidado: item[8] || 'No'
-      }));
+      // Transformar TODOS los registros del rango de fechas
+      this.registros = response.data.map(item => {
+        // Normalizar la fecha para comparación interna
+        const normalizedDate = this.normalizeDate(item[6]);
+        const fechaISO = this.formatToISO(normalizedDate);
+        
+        return {
+          id: item[0],
+          producto: item[1],
+          referencia: item[2],
+          descripcion: item[3],
+          precio: item[4],
+          precioFinal: item[5],
+          fecha: this.formatDate(item[6]), // Formatear para mostrar
+          fechaISO: fechaISO, // Fecha ISO para comparaciones
+          hora: this.formatTime(item[7]),
+          liquidado: item[8] || 'No'
+        };
+      });
 
-      //Aplicar filtros locales (producto + estado)
+      // Aplicar filtros locales (producto + estado)
       this.aplicarFiltrosLocales();
 
       this.elements.loadingOverlay.style.display = 'none';

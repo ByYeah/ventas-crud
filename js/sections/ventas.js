@@ -82,8 +82,9 @@ export class VentasManager {
     try {
       this.ui.showLoading();
 
-      // Obtener ventas del servidor
-      const serverVentas = await this.api.fetchVentas();
+      // Obtener las últimas ventas del servidor
+      const response = await this.api.fetchUltimosVentas(5);
+      const serverVentas = response.data; // Extraer el array de la respuesta
 
       // Obtener ventas pendientes locales
       this.pendingVentas = this.utils.getPendingVentas();
@@ -111,31 +112,80 @@ export class VentasManager {
     const nuevaVenta = this.createVentaFromForm();
 
     try {
+      // Añadir temporalmente el nuevo registro (no reemplazar toda la lista)
       this.ventas.unshift(nuevaVenta);
-      this.renderVentas();
+      this.renderVentas(); // Mostrar inmediatamente
 
       const result = await this.api.sendVenta(nuevaVenta);
 
       if (result?.status === 'success') {
         this.ui.showAlert('✅ Venta registrada con éxito', 'success');
-        this.resetForm(true); // Limpiar todos los campos
+        this.resetForm(true);
 
-        // Actualizar lista de ventas desde el servidor
-        this.ventas = await this.api.fetchVentas();
+        // Obtener los últimos 5 registros del servidor y mantener el nuevo registro si está entre los últimos 5
+        const response = await this.api.fetchUltimosVentas(5);
+        const nuevosUltimos = response.data;
+
+        // Verificar si el nuevo registro está entre los últimos 5
+        const nuevoRegistroEstaEnUltimos = nuevosUltimos.some(venta => 
+          Array.isArray(venta) && venta[0] === nuevaVenta.id
+        );
+
+        if (nuevoRegistroEstaEnUltimos) {
+          // Si está entre los últimos 5, usar los registros del servidor
+          this.ventas = nuevosUltimos;
+        } else {
+          // Si no está entre los últimos 5, mantener los registros actuales
+          // (el nuevo registro ya no es uno de los 5 más recientes)
+          // Pero actualizamos solo los registros existentes para reflejar cambios
+          this.ventas = this.actualizarRegistrosExistentes(this.ventas, nuevosUltimos);
+        }
+        
         this.renderVentas();
       } else {
         this.savePendingVenta(nuevaVenta);
         this.ui.showAlert('⚠️ Se guardó localmente', 'warning');
-        this.resetForm(true); // Limpiar incluso en caso de error
+        this.resetForm(true); 
       }
     } catch (error) {
       this.savePendingVenta(nuevaVenta);
-      this.ui.showAlert('📴 Se guardó localmente (sin conexión)', 'info');
-      this.resetForm(true); // Limpiar campos en modo offline
+      this.ui.showAlert('Offline - Se guardó localmente', 'info');
+      this.resetForm(true); 
     }
   }
 
-  resetForm(clearAll = true) { // Siempre limpiar completamente
+  // Nuevo método para actualizar solo los registros existentes
+  actualizarRegistrosExistentes(ventasActuales, nuevosRegistros) {
+    const actualizados = [...ventasActuales];
+    const nuevosMap = new Map();
+    
+    // Crear mapa de nuevos registros por ID
+    nuevosRegistros.forEach(venta => {
+      if (Array.isArray(venta) && venta[0]) {
+        nuevosMap.set(venta[0], venta);
+      }
+    });
+
+    // Actualizar los registros existentes que también están en los nuevos
+    for (let i = 0; i < actualizados.length; i++) {
+      const venta = actualizados[i];
+      let id;
+      
+      if (Array.isArray(venta)) {
+        id = venta[0];
+      } else if (venta.id) {
+        id = venta.id;
+      }
+      
+      if (id && nuevosMap.has(id)) {
+        actualizados[i] = nuevosMap.get(id);
+      }
+    }
+
+    return actualizados;
+  }
+
+  resetForm(clearAll = true) { 
     if (!this.elements.form) return;
 
     this.elements.form.reset();
@@ -174,8 +224,8 @@ export class VentasManager {
 
     // Primero agregar ventas del servidor
     serverVentas.forEach(venta => {
-      if (!ids.has(venta.id)) {
-        ids.add(venta.id);
+      if (!ids.has(venta[0])) { // El ID está en índice 0
+        ids.add(venta[0]);
         uniqueVentas.push(venta);
       }
     });
@@ -194,7 +244,26 @@ export class VentasManager {
   renderVentas() {
     if (!this.elements.tableBody) return;
 
-    const lastFive = [...this.ventas].slice(0, 5);
+    // Asegurarse de que las ventas estén en formato correcto
+    const ventasFormateadas = this.ventas.map(venta => {
+      if (Array.isArray(venta)) {
+        // Si es un array (registro de servidor), convertirlo a objeto
+        return {
+          id: venta[0],
+          producto: venta[1],
+          referencia: venta[2] || '-',
+          descripcion: venta[3] || '-',
+          precio: venta[4],
+          precioFinal: venta[5],
+          fecha: this.utils.formatDisplayDate(venta[6]),
+          hora: venta[7] || '--:--'
+        };
+      }
+      // Si ya es un objeto (venta local), usarlo directamente
+      return venta;
+    });
+
+    const lastFive = ventasFormateadas.slice(0, 5);
     this.elements.tableBody.innerHTML = '';
 
     lastFive.forEach(venta => {
@@ -202,11 +271,11 @@ export class VentasManager {
       row.innerHTML = `
         <td>${venta.id}</td>
         <td>${venta.producto}</td>
-        <td>${venta.referencia || '-'}</td>
-        <td>${venta.descripcion || '-'}</td>
+        <td>${venta.referencia}</td>
+        <td>${venta.descripcion}</td>
         <td>${this.utils.formatCurrency(venta.precio)}</td>
         <td>${this.utils.formatCurrency(venta.precioFinal)}</td>
-        <td>${this.utils.formatDisplayDate(venta.fecha)} / ${venta.hora || '--:--'}</td>
+        <td>${venta.fecha} / ${venta.hora}</td>
       `;
       this.elements.tableBody.appendChild(row);
     });
@@ -254,8 +323,9 @@ export class VentasManager {
 
     if (results.success.length > 0) {
       this.ui.showAlert(`✅ ${results.success.length} ventas sincronizadas`, 'success');
-      // Actualizar lista desde el servidor
-      this.ventas = await this.api.fetchVentas();
+      // Actualizar lista desde el servidor (solo últimos 5)
+      const response = await this.api.fetchUltimosVentas(5);
+      this.ventas = response.data; // Solo los últimos 5
       this.renderVentas();
     }
   }
