@@ -1,1 +1,2 @@
-.config.js
+.# Ignore only the project's config.js file
+js/core/config.js
