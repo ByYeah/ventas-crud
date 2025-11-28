@@ -331,16 +331,29 @@ export class LiquidacionesManager {
     try {
       this.ui.showLoading();
 
+      // Asegurar que los IDs sean strings
+      const idsParaLiquidar = this.registrosParaLiquidar.map(r => {
+        // Convertir a string para asegurar consistencia
+        return r.id.toString();
+      });
+
+      console.log('IDs a enviar para liquidar:', idsParaLiquidar); // Log para depuración
+
       // Llamar al endpoint real de liquidación
       const response = await this.api.post('/liquidar', {
-        ids: this.registrosParaLiquidar.map(r => r.id) // Enviar todos los IDs pendientes
+        ids: idsParaLiquidar
       });
+
+      console.log('Respuesta de liquidación:', response); // Log para depuración
 
       if (response.status === 'success') {
         this.ui.showAlert(`✅ ${response.actualizados} registros liquidados exitosamente`, 'success');
 
-        // Limpiar y recalcular
-        this.calcularResumenLiquidacion(); // Recargar los pendientes
+        // Limpiar fechas seleccionadas
+        this.limpiarFechasSeleccionadas();
+
+        // Recalcular resumen (esto mostrará 0 registros pendientes)
+        this.calcularResumenLiquidacion();
       } else {
         throw new Error(response.message || 'Error en la liquidación');
       }
@@ -350,6 +363,22 @@ export class LiquidacionesManager {
       this.ui.showAlert('Error al procesar la liquidación: ' + error.message, 'error');
     } finally {
       this.ui.hideLoading();
+    }
+  }
+
+  // Limpiar fechas seleccionadas
+  limpiarFechasSeleccionadas() {
+    if (this.elements.fechaInicioLiqui) {
+      this.elements.fechaInicioLiqui.value = '';
+    }
+    if (this.elements.fechaFinLiqui) {
+      this.elements.fechaFinLiqui.value = '';
+    }
+    if (this.elements.fechaInicioDisplay) {
+      this.elements.fechaInicioDisplay.textContent = '-';
+    }
+    if (this.elements.fechaFinDisplay) {
+      this.elements.fechaFinDisplay.textContent = '-';
     }
   }
 
