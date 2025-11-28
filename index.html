@@ -183,6 +183,17 @@
 
         <div class="vista-previa-liquidacion">
           <h4>Vista Previa de Registros a Liquidar</h4>
+          <!-- Dropdown para elegir registros por página -->
+          <div class="registros-por-pagina">
+            <label for="registros-por-pagina">Mostrar:</label>
+            <select id="registros-por-pagina" class="form-select">
+              <option value="10" selected>10</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span>por página</span>
+          </div>
           <div class="contador-vista-previa">
             <span id="preview-count">0 registros pendientes por liquidar</span>
           </div>
@@ -205,6 +216,12 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          <!-- Controles de paginación -->
+          <div class="paginacion-controles">
+            <button id="btn-anterior-liqui" class="btn btn-terciario" disabled>Anterior</button>
+            <span id="pagina-actual-liqui" class="pagina-info">1 de 1</span>
+            <button id="btn-siguiente-liqui" class="btn btn-primario">Siguiente</button>
           </div>
         </div>
 
