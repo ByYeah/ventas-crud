@@ -814,13 +814,30 @@ table td {
   font-size: 1rem;
 }
 
+/* Contenedor para filtros y resumen de liquidación */
+.liquidacion-controles {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
 /* Filtros de fecha */
 .filtro-liquidacion {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #fd7e14;
+  flex: 1;
+}
+
+.filtro-liquidacion h4 {
+  margin: 0 0 15px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .filtros-fecha {
@@ -870,15 +887,17 @@ table td {
 
 /* Resumen de liquidación */
 .resumen-liquidacion {
-  margin-bottom: 25px;
+  flex: 1;
+  /* Permite que el resumen crezca */
 }
 
 .card-resumen {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #007bff;
+  height: 100%;
 }
 
 .card-resumen h4 {
@@ -916,7 +935,7 @@ table td {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 25px;
 }
 
@@ -952,7 +971,7 @@ table td {
   background: white;
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .tabla-datos th {
@@ -1049,7 +1068,7 @@ table td {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1066,8 +1085,13 @@ table td {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .alert {
@@ -1100,24 +1124,24 @@ table td {
   #seccion-liquidacion {
     padding: 15px;
   }
-  
+
   .filtros-fecha {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .filtro-item {
     min-width: 100%;
   }
-  
+
   .acciones-liquidacion {
     flex-direction: column;
   }
-  
+
   .tabla-responsive {
     font-size: 0.8rem;
   }
-  
+
   .tabla-datos th,
   .tabla-datos td {
     padding: 8px 10px;
@@ -1128,11 +1152,11 @@ table td {
   .encabezado-seccion h2 {
     font-size: 1.5rem;
   }
-  
+
   .card-resumen {
     padding: 15px;
   }
-  
+
   .resumen-item {
     flex-direction: column;
     align-items: flex-start;

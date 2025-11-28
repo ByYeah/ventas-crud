@@ -148,32 +148,35 @@
           <p>Gestiona la liquidación masiva de registros pendientes</p>
         </div>
 
-        <div class="filtro-liquidacion">
-          <div class="filtros-fecha">
-            <div class="filtro-item">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="fecha-inicio-liqui">
-              <span id="fecha-inicio-display" class="fecha-display">-</span>
-            </div>
+        <div class="liquidacion-controles">
+          <div class="filtro-liquidacion">
+            <h4>Fechas de liquidación</h4>
+            <div class="filtros-fecha">
+              <div class="filtro-item">
+                <label>Fecha Inicio:</label>
+                <input type="date" id="fecha-inicio-liqui">
+                <span id="fecha-inicio-display" class="fecha-display">-</span>
+              </div>
 
-            <div class="filtro-item">
-              <label>Fecha Fin:</label>
-              <input type="date" id="fecha-fin-liqui">
-              <span id="fecha-fin-display" class="fecha-display">-</span>
+              <div class="filtro-item">
+                <label>Fecha Fin:</label>
+                <input type="date" id="fecha-fin-liqui">
+                <span id="fecha-fin-display" class="fecha-display">-</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="resumen-liquidacion">
-          <div class="card-resumen">
-            <h4>Resumen de Liquidación</h4>
-            <div class="resumen-item">
-              <span>Total Registros:</span>
-              <strong id="total-registros-liqui">0</strong>
-            </div>
-            <div class="resumen-item">
-              <span>Valor Total:</span>
-              <strong id="total-valor-liqui">$0</strong>
+          <div class="resumen-liquidacion">
+            <div class="card-resumen">
+              <h4>Resumen de Liquidación</h4>
+              <div class="resumen-item">
+                <span>Total Registros:</span>
+                <strong id="total-registros-liqui">0</strong>
+              </div>
+              <div class="resumen-item">
+                <span>Valor Total:</span>
+                <strong id="total-valor-liqui">$0</strong>
+              </div>
             </div>
           </div>
         </div>
@@ -181,7 +184,7 @@
         <div class="vista-previa-liquidacion">
           <h4>Vista Previa de Registros a Liquidar</h4>
           <div class="contador-vista-previa">
-            <span id="preview-count">0 registros pendientes</span>
+            <span id="preview-count">0 registros pendientes por liquidar</span>
           </div>
           <div class="tabla-responsive">
             <table class="tabla-datos">
