@@ -9,10 +9,15 @@ export class LiquidacionesManager {
     this.api = new ApiService();
     this.ui = new UIUtils();
     this.utils = Utils;
-    this.registrosParaLiquidar = []; // IDs de registros no liquidadas en el rango
+    this.registrosParaLiquidar = []; // Todos los registros no liquidados en el rango
+    this.registrosPaginados = []; // Registros actuales en la página
+    this.currentPage = 1;
+    this.registrosPerPage = 10; // Valor por defecto
+    this.totalPages = 1;
 
     this.initElements();
     this.bindEvents();
+    this.crearModalConfirmacion();
   }
 
   // Inicializando referencias a elementos del DOM
@@ -36,8 +41,82 @@ export class LiquidacionesManager {
 
       // Tabla de vista previa
       tableBody: document.getElementById('liquidacionTableBody'),
-      previewCount: document.getElementById('preview-count')
+      previewCount: document.getElementById('preview-count'),
+
+      // Paginación
+      btnAnteriorLiqui: document.getElementById('btn-anterior-liqui'),
+      btnSiguienteLiqui: document.getElementById('btn-siguiente-liqui'),
+      paginaActualLiqui: document.getElementById('pagina-actual-liqui'),
+
+      // Dropdown de registros por página
+      registrosPorPagina: document.getElementById('registros-por-pagina')
     };
+  }
+
+  // Crear modal de confirmación personalizado
+  crearModalConfirmacion() {
+    // Verificar si ya existe
+    if (document.getElementById('modal-confirmacion-liqui')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-confirmacion-liqui';
+    modal.className = 'modal-confirmacion';
+    modal.style.display = 'none';
+    modal.innerHTML = `
+      <div class="modal-confirmacion-contenido">
+        <div class="modal-confirmacion-header">
+          <h3>Confirmar Liquidación</h3>
+        </div>
+        <div class="modal-confirmacion-body">
+          <p id="modal-texto-confirmacion">¿Está seguro de que desea liquidar los registros seleccionados?</p>
+        </div>
+        <div class="modal-confirmacion-footer">
+          <button id="btn-modal-cancelar" class="btn btn-terciario">Cancelar</button>
+          <button id="btn-modal-aceptar" class="btn btn-secundario">Aceptar</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Eventos para el modal
+    document.getElementById('btn-modal-cancelar')?.addEventListener('click', () => {
+      this.cerrarModalConfirmacion();
+    });
+
+    document.getElementById('btn-modal-aceptar')?.addEventListener('click', () => {
+      this.confirmarLiquidacionReal();
+      this.cerrarModalConfirmacion();
+    });
+
+    // Cerrar al hacer clic fuera
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.cerrarModalConfirmacion();
+      }
+    });
+  }
+
+  // Mostrar modal de confirmación
+  mostrarModalConfirmacion(texto) {
+    const modal = document.getElementById('modal-confirmacion-liqui');
+    const textoElement = document.getElementById('modal-texto-confirmacion');
+
+    if (textoElement) {
+      textoElement.textContent = texto;
+    }
+
+    if (modal) {
+      modal.style.display = 'flex';
+    }
+  }
+
+  // Cerrar modal de confirmación
+  cerrarModalConfirmacion() {
+    const modal = document.getElementById('modal-confirmacion-liqui');
+    if (modal) {
+      modal.style.display = 'none';
+    }
   }
 
   // Vincula eventos
@@ -49,6 +128,18 @@ export class LiquidacionesManager {
     // Acciones
     this.elements.btnConfirmarLiqui?.addEventListener('click', () => this.confirmarLiquidacion());
     this.elements.btnCancelarLiqui?.addEventListener('click', () => this.cancelarLiquidacion());
+
+    // Paginación
+    this.elements.btnAnteriorLiqui?.addEventListener('click', () => this.cambiarPagina(-1));
+    this.elements.btnSiguienteLiqui?.addEventListener('click', () => this.cambiarPagina(1));
+
+    // Dropdown de registros por página
+    this.elements.registrosPorPagina?.addEventListener('change', (e) => {
+      this.registrosPerPage = parseInt(e.target.value);
+      this.currentPage = 1; // Resetear a la primera página
+      this.calcularPaginas(); // Recalcular páginas con el nuevo tamaño
+      this.renderizarVistaPrevia();
+    });
   }
 
   // Llamado al entrar a la sección
@@ -151,14 +242,18 @@ export class LiquidacionesManager {
       const totalValor = pendientes.reduce((sum, r) => sum + r.precioFinal, 0);
 
       // Guardar para confirmar
-      this.registrosParaLiquidar = pendientes.map(r => r.id);
+      this.registrosParaLiquidar = pendientes;
 
       // Actualizar UI
       this.elements.totalRegistrosLiqui.textContent = totalRegistros;
       this.elements.totalValorLiqui.textContent = this.utils.formatCurrency(totalValor);
 
-      // Renderizar vista previa
-      this.renderizarVistaPrevia(pendientes);
+      // Inicializar paginación
+      this.currentPage = 1;
+      this.calcularPaginas();
+
+      // Renderizar vista previa (primera página)
+      this.renderizarVistaPrevia();
 
     } catch (error) {
       console.error('Error en calcularResumenLiquidacion:', error);
@@ -170,42 +265,82 @@ export class LiquidacionesManager {
     }
   }
 
+  // Calcular número de páginas
+  calcularPaginas() {
+    this.totalPages = Math.ceil(this.registrosParaLiquidar.length / this.registrosPerPage);
+    this.registrosPaginados = this.registrosParaLiquidar.slice(
+      (this.currentPage - 1) * this.registrosPerPage,
+      this.currentPage * this.registrosPerPage
+    );
+  }
+
+  // Cambiar página
+  cambiarPagina(delta) {
+    const nuevaPagina = this.currentPage + delta;
+
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPages) {
+      this.currentPage = nuevaPagina;
+      this.calcularPaginas();
+      this.renderizarVistaPrevia();
+      this.actualizarControlesPaginacion();
+    }
+  }
+
+  // Actualizar controles de paginación
+  actualizarControlesPaginacion() {
+    if (this.elements.btnAnteriorLiqui) {
+      this.elements.btnAnteriorLiqui.disabled = this.currentPage <= 1;
+    }
+    if (this.elements.btnSiguienteLiqui) {
+      this.elements.btnSiguienteLiqui.disabled = this.currentPage >= this.totalPages;
+    }
+    if (this.elements.paginaActualLiqui) {
+      this.elements.paginaActualLiqui.textContent = `${this.currentPage} de ${this.totalPages}`;
+    }
+  }
+
   // Reiniciar resumen
   resetResumen() {
     this.elements.totalRegistrosLiqui.textContent = '0';
     this.elements.totalValorLiqui.textContent = this.utils.formatCurrency(0);
     this.registrosParaLiquidar = [];
+    this.registrosPaginados = [];
+    this.currentPage = 1;
+    this.totalPages = 1;
     this.renderizarVistaPrevia([]);
   }
 
-  // Confirmar liquidación (enviar IDs al backend)
-  async confirmarLiquidacion() {
+  // Confirmar liquidación (mostrar modal)
+  confirmarLiquidacion() {
     if (this.registrosParaLiquidar.length === 0) {
       this.ui.showAlert('No hay registros pendientes de liquidar en el rango seleccionado', 'warning');
       return;
     }
 
-    const confirm = this.ui.showConfirm(
-      '¿Confirmar liquidación?',
-      `Se marcarán ${this.registrosParaLiquidar.length} registros como liquidados. ¿Desea continuar?`
-    );
+    const textoConfirmacion = `¿Confirmar liquidación?\nSe marcarán ${this.registrosParaLiquidar.length} registros como liquidados. ¿Desea continuar?`;
+    this.mostrarModalConfirmacion(textoConfirmacion);
+  }
 
-    if (!confirm) return;
+  // Confirmar liquidación real (después de aceptar en modal)
+  async confirmarLiquidacionReal() {
+    if (this.registrosParaLiquidar.length === 0) {
+      this.ui.showAlert('No hay registros pendientes de liquidar', 'warning');
+      return;
+    }
 
     try {
       this.ui.showLoading();
 
       // Llamar al endpoint real de liquidación
       const response = await this.api.post('/liquidar', {
-        ids: this.registrosParaLiquidar
+        ids: this.registrosParaLiquidar.map(r => r.id) // Enviar todos los IDs pendientes
       });
 
       if (response.status === 'success') {
         this.ui.showAlert(`✅ ${response.actualizados} registros liquidados exitosamente`, 'success');
 
         // Limpiar y recalcular
-        this.registrosParaLiquidar = [];
-        this.calcularResumenLiquidacion();
+        this.calcularResumenLiquidacion(); // Recargar los pendientes
       } else {
         throw new Error(response.message || 'Error en la liquidación');
       }
@@ -225,12 +360,17 @@ export class LiquidacionesManager {
     this.resetResumen();
   }
 
-  renderizarVistaPrevia(registros) {
+  renderizarVistaPrevia() {
     if (!this.elements.tableBody) return;
 
-    this.elements.tableBody.innerHTML = registros.length === 0
+    // Calcular páginas si no se ha hecho
+    if (this.registrosParaLiquidar.length > 0 && this.totalPages === 0) {
+      this.calcularPaginas();
+    }
+
+    this.elements.tableBody.innerHTML = this.registrosPaginados.length === 0
       ? '<tr><td colspan="6" style="text-align:center; color:#6c757d">No hay registros pendientes en este rango</td></tr>'
-      : registros.map(r => `
+      : this.registrosPaginados.map(r => `
         <tr>
           <td>${r.id}</td>
           <td>${r.producto}</td>
@@ -241,7 +381,14 @@ export class LiquidacionesManager {
         </tr>
       `).join('');
 
-    this.elements.previewCount.textContent =
-      `${registros.length} ${registros.length === 1 ? 'registro' : 'registros'} pendiente${registros.length !== 1 ? 's' : ''}`;
+    // Actualizar contador
+    if (this.elements.previewCount) {
+      const totalPendientes = this.registrosParaLiquidar.length;
+      this.elements.previewCount.textContent =
+        `${totalPendientes} ${totalPendientes === 1 ? 'registro' : 'registros'} pendiente${totalPendientes !== 1 ? 's' : ''} por liquidar`;
+    }
+
+    // Actualizar controles de paginación
+    this.actualizarControlesPaginacion();
   }
 }
