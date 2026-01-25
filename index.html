@@ -51,6 +51,13 @@
           </svg>
           Liquidaciones
         </button></li>
+        <li><button data-target="ediciones">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-ediciones">
+            <path fill="#8e44ad"
+              d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+          </svg>
+          Ediciones
+        </button></li>
       <li><button data-target="referencias">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-referencias">
             <path fill="#0f2a85"
@@ -238,6 +245,49 @@
 
     <section id="referencias" class="section hidden">
       <p>No disponible por ahora.</p>
+    </section>
+
+    <section id="ediciones" class="section hidden">
+      <h2>Edición y Eliminación de Ventas</h2>
+
+        <div class="filters">
+            <label for="filtro_fecha_inicio_ediciones">Fecha Inicio:</label>
+            <input type="date" id="filtro_fecha_inicio_ediciones">
+
+            <label for="filtro_fecha_fin_ediciones">Fecha Fin:</label>
+            <input type="date" id="filtro_fecha_fin_ediciones">
+
+            <label for="filtro_producto_ediciones">Producto:</label>
+            <select id="filtro_producto_ediciones">
+                <option value="">Todos</option>
+                <!-- Las opciones se llenarán dinámicamente -->
+            </select>
+
+            <button id="btn_aplicar_filtro_ediciones">Aplicar Filtro</button>
+            <button id="btn_limpiar_filtro_ediciones">Limpiar</button>
+        </div>
+
+        <!-- Tabla de Resultados -->
+        <div class="table-container">
+            <table id="tabla_ediciones">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Total</th>
+                        <th>Liquidado</th>
+                        <th>Acciones</th> <!-- Columna para botones de Editar/Eliminar -->
+                    </tr>
+                </thead>
+                <tbody id="tbody_ediciones">
+                    <!-- Las filas se insertarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
     </section>
 
     <section id="registros" class="section hidden">
