@@ -51,7 +51,7 @@
           </svg>
           Liquidaciones
         </button></li>
-        <li><button data-target="ediciones">
+      <li><button data-target="ediciones">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-ediciones">
             <path fill="#8e44ad"
               d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
@@ -250,44 +250,67 @@
     <section id="ediciones" class="section hidden">
       <h2>Edición y Eliminación de Ventas</h2>
 
+      <div class="container">
         <div class="filters">
-            <label for="filtro_fecha_inicio_ediciones">Fecha Inicio:</label>
-            <input type="date" id="filtro_fecha_inicio_ediciones">
-
-            <label for="filtro_fecha_fin_ediciones">Fecha Fin:</label>
-            <input type="date" id="filtro_fecha_fin_ediciones">
-
-            <label for="filtro_producto_ediciones">Producto:</label>
-            <select id="filtro_producto_ediciones">
-                <option value="">Todos</option>
-                <!-- Las opciones se llenarán dinámicamente -->
+          <div>
+            <label for="fecha-inicio-ediciones">Fecha Inicio:</label>
+            <input type="date" id="fecha-inicio-ediciones">
+          </div>
+          <div>
+            <label for="fecha-fin-ediciones">Fecha Fin:</label>
+            <input type="date" id="fecha-fin-ediciones">
+          </div>
+          <div>
+            <label for="filtro-tipo-producto">Tipo de Producto:</label>
+            <select id="filtro-tipo-producto">
+              <option value="">Todos</option>
+              <option value="Gorra">Gorra</option>
+              <option value="Pantaloneta">Pantaloneta</option>
+              <option value="Chaquetas">Chaquetas</option>
+              <option value="Buzo">Buzo</option>
+              <option value="Cortaviento">Cortaviento</option>
+              <option value="Camiseta">Camiseta</option>
             </select>
-
-            <button id="btn_aplicar_filtro_ediciones">Aplicar Filtro</button>
-            <button id="btn_limpiar_filtro_ediciones">Limpiar</button>
+          </div>
+          <div>
+            <label for="filtro-referencia">Referencia:</label>
+            <input type="text" id="filtro-referencia" placeholder="Buscar por referencia...">
+          </div>
+          <button id="btn-buscar-ediciones">Buscar</button>
+          <button id="btn-limpiar-ediciones">Limpiar</button>
         </div>
 
-        <!-- Tabla de Resultados -->
+        <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Cargando registros...</p>
+      </div>
+
         <div class="table-container">
-            <table id="tabla_ediciones">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio Unitario</th>
-                        <th>Total</th>
-                        <th>Liquidado</th>
-                        <th>Acciones</th> <!-- Columna para botones de Editar/Eliminar -->
-                    </tr>
-                </thead>
-                <tbody id="tbody_ediciones">
-                    <!-- Las filas se insertarán aquí dinámicamente -->
-                </tbody>
-            </table>
+          <table id="tabla-ediciones">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Referencia</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Precio Final</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-ediciones">
+              <!-- Las filas se generarán aquí dinámicamente -->
+            </tbody>
+          </table>
         </div>
+
+        <div class="pagination-controls-bottom">
+          <button id="btn-anterior-ediciones" class="btn-pagination">Anterior</button>
+          <span id="pagina-actual-ediciones">1</span>
+          <button id="btn-siguiente-ediciones" class="btn-pagination">Siguiente</button>
+        </div>
+      </div>
     </section>
 
     <section id="registros" class="section hidden">

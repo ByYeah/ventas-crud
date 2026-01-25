@@ -7,6 +7,7 @@ import { VentasManager } from './sections/ventas.js';
 import { RegistrosManager } from './sections/registros.js';
 import { ReferenciasManager } from './sections/referencias.js';;
 import { LiquidacionesManager } from './sections/liquidaciones.js';
+import { EdicionesManager } from './sections/ediciones.js';
 
 // Clase principal de la aplicación
 class App {
@@ -21,7 +22,8 @@ class App {
       vender: new VentasManager(this),
       registros: new RegistrosManager(this),
       referencias: new ReferenciasManager(this),
-      liquidaciones: new LiquidacionesManager(this)
+      liquidaciones: new LiquidacionesManager(this),
+      ediciones: new EdicionesManager(this)
     };
 
     // Inicializar servicios
