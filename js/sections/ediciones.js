@@ -30,7 +30,7 @@ export class EdicionesManager {
             btnAnterior: document.getElementById('btn-anterior-ediciones'),
             btnSiguiente: document.getElementById('btn-siguiente-ediciones'),
             paginaActual: document.getElementById('pagina-actual-ediciones'),
-            loadingOverlay: document.getElementById('loading-overlay'),
+            loadingOverlay: document.getElementById('loading-overlay-ediciones'),
             tableBody: document.querySelector('#tabla-ediciones tbody'),
         };
     }

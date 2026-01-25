@@ -33,7 +33,7 @@ export class RegistrosManager {
       tableBody: document.querySelector('#registrosTable tbody'),
       totalRegistros: document.getElementById('total-registros'),
       chipsContainer: document.querySelector('.chips-container'),
-      loadingOverlay: document.getElementById('loading-overlay'),
+      loadingOverlay: document.getElementById('loading-overlay-registros'),
       totalVendido: document.getElementById('total-vendido')
     };
   }
@@ -140,22 +140,22 @@ export class RegistrosManager {
   // Método para formatear fecha a YYYY-MM-DD para comparaciones
   formatToISO(date) {
     if (!date || !(date instanceof Date)) return '';
-    
+
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
     const day = String(date.getUTCDate()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
   }
 
   // Método para formatear fecha a DD/MM/YYYY para mostrar
   formatToDisplay(date) {
     if (!date || !(date instanceof Date)) return '-';
-    
+
     const day = String(date.getUTCDate()).padStart(2, '0');
     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
     const year = date.getUTCFullYear();
-    
+
     return `${day}/${month}/${year}`;
   }
 
@@ -199,7 +199,7 @@ export class RegistrosManager {
 
     return data.filter(row => {
       const fechaOriginal = row[6]; // Fecha está en la columna 6
-      
+
       // Usar el método específico para comparación
       return this.compareDates(fechaOriginal, startDateStr, endDateStr);
     });
@@ -269,7 +269,7 @@ export class RegistrosManager {
         // Normalizar la fecha para comparación interna
         const normalizedDate = this.normalizeDate(item[6]);
         const fechaISO = this.formatToISO(normalizedDate);
-        
+
         return {
           id: item[0],
           producto: item[1],
