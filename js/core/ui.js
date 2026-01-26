@@ -125,7 +125,7 @@ export class UIUtils {
    * @param {Object} config { title, message, confirmText, cancelText, type }
    * @returns {Promise<boolean>}
    */
- async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
+  async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
     return new Promise((resolve) => {
       const existing = document.getElementById('modal-global-confirm');
       if (existing) existing.remove();
@@ -189,7 +189,7 @@ export class UIUtils {
       document.getElementById('modal-btn-confirm').onclick = () => close(true);
       modal.onclick = (e) => { if (e.target === modal) close(false); };
     });
-}
+  }
 
   /**
    * Modal de Edición Dinámico
@@ -224,9 +224,9 @@ export class UIUtils {
     document.body.appendChild(modal);
 
     document.getElementById('modal-custom-cancel').onclick = () => modal.remove();
-    document.getElementById('modal-custom-save').onclick = () => {
-      const formData = onSave(modal); // Pasamos el modal para que el manager extraiga los datos
-      if (formData) modal.remove();
+    document.getElementById('modal-custom-save').onclick = async () => {
+      const result = await onSave(modal); // Esperamos a que el manager confirme
+      if (result === true) modal.remove();
     };
   }
 }

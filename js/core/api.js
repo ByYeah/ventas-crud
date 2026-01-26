@@ -146,24 +146,38 @@ export class ApiService {
     }
   }
 
-async deleteVenta(id) {
+  async deleteVenta(id) {
     // Construimos la URL con el parámetro 'path=eliminar' y el 'id'
     // Importante: Usar CONFIG.GAS_URL que es la que ya tienes probada
-    const gasUrl = CONFIG.GAS_URL; 
+    const gasUrl = CONFIG.GAS_URL;
     const targetUrl = `${gasUrl}?path=eliminar&id=${encodeURIComponent(id)}`;
-    
+
     // El proxy espera el target codificado
     const url = `${this.baseUrl}?target=${encodeURIComponent(targetUrl)}`;
 
     console.log("Enviando petición de eliminación a:", url);
 
     const options = {
-        method: 'POST', // Google Apps Script doPost manejará esto
-        headers: {
-            'Accept': 'application/json'
-        }
+      method: 'POST', // Google Apps Script doPost manejará esto
+      headers: {
+        'Accept': 'application/json'
+      }
     };
 
     return await this.fetchWithTimeout(url, options);
-}
+  }
+
+  /**
+ * Actualiza un registro existente
+ * @param {Object} datos Objeto con id, referencia, descripcion, precio y precioFinal
+ */
+  async updateVenta(datos) {
+    try {
+      // Usamos el método post que ya tienes configurado en tu ApiService
+      return await this.post('/update-venta', datos);
+    } catch (error) {
+      console.error('Error en ApiService.updateVenta:', error);
+      throw error;
+    }
+  }
 }

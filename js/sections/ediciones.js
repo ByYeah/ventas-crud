@@ -267,7 +267,6 @@ export class EdicionesManager {
 
     updatePaginationControls() {
         const totalPages = Math.ceil(this.filteredRegistros.length / this.registrosPerPage);
-
         this.elements.btnAnterior.disabled = this.currentPage <= 1;
         this.elements.btnSiguiente.disabled = this.currentPage >= totalPages;
         this.elements.paginaActual.textContent = this.currentPage;
@@ -283,10 +282,90 @@ export class EdicionesManager {
         this.renderizarRegistros();
     }
 
-    prepararEdicion(id) {
-        this.ui.showAlert(`Funcionalidad de edición para ID ${id} aún no implementada.`, 'info');
+    async prepararEdicion(id) {
+        // 1. Buscar los datos actuales del registro en nuestro array local
+        const registro = this.registros.find(r => r.id.toString() === id.toString());
+
+        if (!registro) {
+            this.ui.showAlert('No se encontraron los datos del registro', 'error');
+            return;
+        }
+
+        // 2. Crear el cuerpo del formulario HTML
+        const formHtml = `
+      <div class="form-edicion-container" style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="form-group">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Referencia:</label>
+          <input type="text" id="edit-referencia" class="form-control" value="${registro.referencia}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div class="form-group">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Descripción:</label>
+          <textarea id="edit-descripcion" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;">${registro.descripcion}</textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="form-group">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Precio:</label>
+            <input type="number" id="edit-precio" class="form-control" value="${registro.precio}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div class="form-group">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Precio Final:</label>
+            <input type="number" id="edit-precioFinal" class="form-control" value="${registro.precioFinal}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+      </div>
+    `;
+
+        // 3. Abrir el modal personalizado
+        this.ui.showCustomModal('Editar Registro #' + id, formHtml, async (modalRef) => {
+            // Esta función se ejecuta al dar clic en "Guardar Cambios"
+            const nuevosDatos = {
+                id: id,
+                referencia: modalRef.querySelector('#edit-referencia').value.trim(),
+                descripcion: modalRef.querySelector('#edit-descripcion').value.trim(),
+                precio: parseFloat(modalRef.querySelector('#edit-precio').value) || 0,
+                precioFinal: parseFloat(modalRef.querySelector('#edit-precioFinal').value) || 0
+            };
+
+            // 4. Segunda validación: Confirmar los cambios
+            const confirmacion = await this.ui.showConfirm({
+                title: '¿Confirmar cambios?',
+                message: `Vas a actualizar el registro de "${registro.producto}". ¿Estás seguro?`,
+                confirmText: 'Sí, Actualizar',
+                type: 'primary'
+            });
+
+            if (confirmacion) {
+                this.ui.showLoading();
+                await this.ejecutarActualizacion(nuevosDatos);
+                return true; // Retornar true cierra el modal de formulario
+            }
+        });
     }
 
+    async ejecutarActualizacion(datos) {
+        try {
+            // Aseguramos que el overlay de la tabla también se vea
+            this.elements.loadingOverlay.style.display = 'flex';
+
+            // Enviamos al backend (Apps Script ahora calculará el nuevo Hash)
+            const response = await this.api.post('/update-venta', datos);
+
+            if (response.status === 'success') {
+                this.ui.showAlert('✅ Registro y Hash actualizados con éxito', 'success');
+                // Refrescamos la tabla para obtener los datos nuevos y el hash recalculado
+                await this.filtrarRegistros();
+            } else {
+                throw new Error(response.message || 'Error al actualizar');
+            }
+        } catch (error) {
+            console.error('Error en actualización:', error);
+            this.ui.showAlert('Error: ' + error.message, 'error');
+        } finally {
+            // Quitamos ambos loaders
+            this.ui.hideLoading();
+            this.elements.loadingOverlay.style.display = 'none';
+        }
+    }
     async prepararEliminacion(id) {
         const confirmado = await this.ui.showConfirm({
             title: '¿Eliminar Registro?',
