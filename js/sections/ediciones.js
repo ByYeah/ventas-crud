@@ -58,13 +58,10 @@ export class EdicionesManager {
         this.isCurrentSection = true;
         this.clearCleanupTimeout();
 
-        // Establecer fecha de hoy por defecto al mostrar la sección
-        const today = new Date().toISOString().split('T')[0];
+        // Uso de la nueva utilidad centralizada
+        const today = this.utils.getTodayInputFormat();
         this.elements.fechaInicio.value = today;
         this.elements.fechaFin.value = today;
-
-        // Cargar datos iniciales
-        //this.filtrarRegistros();
     }
 
     onSectionHide() {
@@ -291,28 +288,28 @@ export class EdicionesManager {
     }
 
     async prepararEliminacion(id) {
-    const confirmado = await this.ui.showConfirm({
-        title: '¿Eliminar Registro?',
-        message: `Esta acción no se puede deshacer. ID del registro: ${id}`,
-        confirmText: 'Eliminar definitivamente',
-        type: 'danger' // Cambiará el color del botón
-    });
+        const confirmado = await this.ui.showConfirm({
+            title: '¿Eliminar Registro?',
+            message: `Esta acción no se puede deshacer. ID del registro: ${id}`,
+            confirmText: 'Eliminar definitivamente',
+            type: 'danger' // Cambiará el color del botón
+        });
 
-    if (confirmado) {
-        try {
-            this.ui.showLoading();
-            const response = await this.api.deleteVenta(id);
-            if (response.status === 'success') {
-                this.ui.showAlert('Registro eliminado', 'success');
-                this.buscarEdiciones(); // Recargar tabla
+        if (confirmado) {
+            try {
+                this.ui.showLoading();
+                const response = await this.api.deleteVenta(id);
+                if (response.status === 'success') {
+                    this.ui.showAlert('Registro eliminado', 'success');
+                    this.filtrarRegistros(); // Recargar tabla
+                }
+            } catch (error) {
+                this.ui.showAlert('Error al eliminar', 'error');
+            } finally {
+                this.ui.hideLoading();
             }
-        } catch (error) {
-            this.ui.showAlert('Error al eliminar', 'error');
-        } finally {
-            this.ui.hideLoading();
         }
     }
-}
 
     async eliminarRegistro(id) {
         try {

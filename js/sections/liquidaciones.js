@@ -14,109 +14,28 @@ export class LiquidacionesManager {
     this.currentPage = 1;
     this.registrosPerPage = 10; // Valor por defecto
     this.totalPages = 1;
-
     this.initElements();
     this.bindEvents();
-    this.crearModalConfirmacion();
   }
 
   // Inicializando referencias a elementos del DOM
   initElements() {
     this.elements = {
-      // Inputs de fecha
       fechaInicioLiqui: document.getElementById('fecha-inicio-liqui'),
       fechaFinLiqui: document.getElementById('fecha-fin-liqui'),
-
-      // Displays de fechas
       fechaInicioDisplay: document.getElementById('fecha-inicio-display'),
       fechaFinDisplay: document.getElementById('fecha-fin-display'),
-
-      // Totales
       totalRegistrosLiqui: document.getElementById('total-registros-liqui'),
       totalValorLiqui: document.getElementById('total-valor-liqui'),
-
-      // Botones
       btnConfirmarLiqui: document.getElementById('btn-confirmar-liqui'),
       btnCancelarLiqui: document.getElementById('btn-cancelar-liqui'),
-
-      // Tabla de vista previa
       tableBody: document.getElementById('liquidacionTableBody'),
       previewCount: document.getElementById('preview-count'),
-
-      // Paginación
       btnAnteriorLiqui: document.getElementById('btn-anterior-liqui'),
       btnSiguienteLiqui: document.getElementById('btn-siguiente-liqui'),
       paginaActualLiqui: document.getElementById('pagina-actual-liqui'),
-
-      // Dropdown de registros por página
       registrosPorPagina: document.getElementById('registros-por-pagina')
     };
-  }
-
-  // Crear modal de confirmación personalizado
-  crearModalConfirmacion() {
-    // Verificar si ya existe
-    if (document.getElementById('modal-confirmacion-liqui')) return;
-
-    const modal = document.createElement('div');
-    modal.id = 'modal-confirmacion-liqui';
-    modal.className = 'modal-confirmacion';
-    modal.style.display = 'none';
-    modal.innerHTML = `
-      <div class="modal-confirmacion-contenido">
-        <div class="modal-confirmacion-header">
-          <h3>Confirmar Liquidación</h3>
-        </div>
-        <div class="modal-confirmacion-body">
-          <p id="modal-texto-confirmacion">¿Está seguro de que desea liquidar los registros seleccionados?</p>
-        </div>
-        <div class="modal-confirmacion-footer">
-          <button id="btn-modal-cancelar" class="btn btn-terciario">Cancelar</button>
-          <button id="btn-modal-aceptar" class="btn btn-secundario">Aceptar</button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    // Eventos para el modal
-    document.getElementById('btn-modal-cancelar')?.addEventListener('click', () => {
-      this.cerrarModalConfirmacion();
-    });
-
-    document.getElementById('btn-modal-aceptar')?.addEventListener('click', () => {
-      this.confirmarLiquidacionReal();
-      this.cerrarModalConfirmacion();
-    });
-
-    // Cerrar al hacer clic fuera
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        this.cerrarModalConfirmacion();
-      }
-    });
-  }
-
-  // Mostrar modal de confirmación
-  mostrarModalConfirmacion(texto) {
-    const modal = document.getElementById('modal-confirmacion-liqui');
-    const textoElement = document.getElementById('modal-texto-confirmacion');
-
-    if (textoElement) {
-      textoElement.textContent = texto;
-    }
-
-    if (modal) {
-      modal.style.display = 'flex';
-    }
-  }
-
-  // Cerrar modal de confirmación
-  cerrarModalConfirmacion() {
-    const modal = document.getElementById('modal-confirmacion-liqui');
-    if (modal) {
-      modal.style.display = 'none';
-    }
   }
 
   // Vincula eventos
@@ -142,17 +61,16 @@ export class LiquidacionesManager {
     });
   }
 
-  // Llamado al entrar a la sección
+
   onSectionShow() {
-    // Establecer fecha final = hoy
-    const today = new Date().toISOString().split('T')[0];
+    const today = this.utils.getTodayInputFormat();
+    
     this.elements.fechaFinLiqui.value = today;
     this.elements.fechaFinLiqui.max = today;
     this.elements.fechaFinDisplay.textContent = this.formatDateForDisplay(today);
 
-    // Calcular con fechas actuales (puedes inicializar inicio si quieres)
     this.calcularResumenLiquidacion();
-  }
+}
 
   // Formatear YYYY-MM-DD → DD/MM/YYYY
   formatDateForDisplay(isoDate) {
@@ -241,18 +159,13 @@ export class LiquidacionesManager {
       const totalRegistros = pendientes.length;
       const totalValor = pendientes.reduce((sum, r) => sum + r.precioFinal, 0);
 
-      // Guardar para confirmar
       this.registrosParaLiquidar = pendientes;
 
-      // Actualizar UI
       this.elements.totalRegistrosLiqui.textContent = totalRegistros;
       this.elements.totalValorLiqui.textContent = this.utils.formatCurrency(totalValor);
 
-      // Inicializar paginación
       this.currentPage = 1;
       this.calcularPaginas();
-
-      // Renderizar vista previa (primera página)
       this.renderizarVistaPrevia();
 
     } catch (error) {
@@ -299,7 +212,6 @@ export class LiquidacionesManager {
     }
   }
 
-  // Reiniciar resumen
   resetResumen() {
     this.elements.totalRegistrosLiqui.textContent = '0';
     this.elements.totalValorLiqui.textContent = this.utils.formatCurrency(0);
@@ -310,18 +222,29 @@ export class LiquidacionesManager {
     this.renderizarVistaPrevia([]);
   }
 
-  // Confirmar liquidación (mostrar modal)
-  confirmarLiquidacion() {
+
+ async confirmarLiquidacion() {
     if (this.registrosParaLiquidar.length === 0) {
-      this.ui.showAlert('No hay registros pendientes de liquidar en el rango seleccionado', 'warning');
-      return;
+        this.ui.showAlert('No hay registros pendientes en el rango seleccionado', 'warning');
+        return;
     }
 
-    const textoConfirmacion = `¿Confirmar liquidación?\nSe marcarán ${this.registrosParaLiquidar.length} registros como liquidados. ¿Desea continuar?`;
-    this.mostrarModalConfirmacion(textoConfirmacion);
-  }
+    const totalValor = this.elements.totalValorLiqui.textContent;
+    const cantidad = this.registrosParaLiquidar.length;
 
-  // Confirmar liquidación real (después de aceptar en modal)
+    const confirmado = await this.ui.showConfirm({
+        title: 'Confirmar Liquidación',
+        message: `Se marcarán ${cantidad} registros como liquidados (Total: ${totalValor}). ¿Desea continuar?`,
+        confirmText: 'Confirmar y Liquidar',
+        type: 'primary'
+    });
+
+    if (confirmado) {
+        this.confirmarLiquidacionReal();
+    }
+}
+
+
   async confirmarLiquidacionReal() {
     if (this.registrosParaLiquidar.length === 0) {
       this.ui.showAlert('No hay registros pendientes de liquidar', 'warning');
