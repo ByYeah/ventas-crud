@@ -713,7 +713,6 @@ table td {
   display: none;
   position: absolute;
   top: calc(100% + 8px);
-  /* sitúa el dropdown justo debajo del botón */
   left: 0;
   right: auto;
   background-color: #f9f9f9;
@@ -722,14 +721,8 @@ table td {
   white-space: nowrap;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   z-index: 1000;
-  /* más alto para que aparezca sobre otras capas */
   border-radius: 6px;
   padding: 6px 0;
-  overflow: hidden;
-  max-height: 60vh;
-  /* evita que el dropdown crezca demasiado */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .filtro-dropdown-container:hover .dropdown-content,
