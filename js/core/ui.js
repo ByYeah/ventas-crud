@@ -125,9 +125,8 @@ export class UIUtils {
    * @param {Object} config { title, message, confirmText, cancelText, type }
    * @returns {Promise<boolean>}
    */
-  async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
+ async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
     return new Promise((resolve) => {
-      // Limpiar si hay uno previo
       const existing = document.getElementById('modal-global-confirm');
       if (existing) existing.remove();
 
@@ -136,26 +135,51 @@ export class UIUtils {
       modal.className = 'modal-confirmacion';
       modal.style.display = 'flex';
 
-      const btnClass = type === 'danger' ? 'btn-eliminar' : 'btn-primario';
+      // Definir color del botón según el tipo
+      const btnClass = type === 'danger' ? 'background-color: #dc3545;' : 'background-color: #007bff;';
 
       modal.innerHTML = `
-        <div class="modal-confirmacion-contenido">
-          <div class="modal-confirmacion-header">
-            <h3>${title}</h3>
+        <div class="modal-confirmacion-contenido" style="max-width: 90%; width: 450px;">
+          <div class="modal-confirmacion-header" style="padding: 15px; border-bottom: 1px solid #eee;">
+            <h3 style="margin: 0;">${title}</h3>
           </div>
-          <div class="modal-confirmacion-body">
-            <p>${message}</p>
+          <div class="modal-confirmacion-body" style="padding: 20px; min-height: 80px;">
+            <p style="margin: 0; color: #444; line-height: 1.5;">${message}</p>
           </div>
-          <div class="modal-confirmacion-footer">
-            <button id="modal-btn-cancel" class="btn btn-terciario">${cancelText}</button>
-            <button id="modal-btn-confirm" class="btn ${btnClass}">${confirmText}</button>
+          <div class="modal-confirmacion-footer" style="
+            padding: 15px; 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+            border-top: 1px solid #eee;
+            flex-wrap: wrap; 
+          ">
+            <button id="modal-btn-cancel" class="btn" style="
+              padding: 10px 20px; 
+              cursor: pointer; 
+              background: #6c757d; 
+              color: white; 
+              border: none; 
+              border-radius: 4px;
+              min-width: 100px;
+            ">${cancelText}</button>
+            
+            <button id="modal-btn-confirm" class="btn" style="
+              padding: 10px 20px; 
+              cursor: pointer; 
+              ${btnClass} 
+              color: white; 
+              border: none; 
+              border-radius: 4px;
+              min-width: 120px;
+              white-space: nowrap;
+            ">${confirmText}</button>
           </div>
         </div>
       `;
 
       document.body.appendChild(modal);
 
-      // Eventos
       const close = (result) => {
         modal.remove();
         resolve(result);
@@ -165,7 +189,7 @@ export class UIUtils {
       document.getElementById('modal-btn-confirm').onclick = () => close(true);
       modal.onclick = (e) => { if (e.target === modal) close(false); };
     });
-  }
+}
 
   /**
    * Modal de Edición Dinámico
