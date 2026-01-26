@@ -904,14 +904,14 @@ table td {
 }
 
 .encabezado-seccion h2 {
-  color: #2c3e50;
+  color: #000000;
   margin: 0 0 5px 0;
   font-size: 1.8rem;
   font-weight: 600;
 }
 
 .encabezado-seccion p {
-  color: #6c757d;
+  color: #000000;
   margin: 0;
   font-size: 1rem;
 }
@@ -937,7 +937,7 @@ table td {
 
 .filtro-liquidacion h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -958,7 +958,7 @@ table td {
 
 .filtro-item label {
   font-weight: 500;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
 }
 
@@ -981,7 +981,7 @@ table td {
   padding: 6px 10px;
   border-radius: 4px;
   font-size: 0.9rem;
-  color: #495057;
+  color: #000000;
   border: 1px solid #ced4da;
   text-align: center;
   min-width: 100px;
@@ -1002,7 +1002,7 @@ table td {
 
 .card-resumen h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -1020,12 +1020,12 @@ table td {
 }
 
 .resumen-item span {
-  color: #6c757d;
+  color: #000000;
   font-weight: 500;
 }
 
 .resumen-item strong {
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.2rem;
   font-weight: 600;
 }
@@ -1041,7 +1041,7 @@ table td {
 
 .vista-previa-liquidacion h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -1058,7 +1058,7 @@ table td {
 }
 
 .contador-vista-previa span {
-  color: #495057;
+  color: #000000;
   font-weight: 500;
 }
 
@@ -1074,7 +1074,7 @@ table td {
 
 .registros-por-pagina label {
   font-weight: 500;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
   white-space: nowrap;
 }
@@ -1090,7 +1090,7 @@ table td {
 .registros-por-pagina span {
   white-space: nowrap;
   font-size: 0.9rem;
-  color: #495057;
+  color: #000000;
 }
 
 /* Tabla de datos */
@@ -1116,7 +1116,7 @@ table td {
   padding: 12px 15px;
   text-align: left;
   font-weight: 600;
-  color: #495057;
+  color: #000000;
   border-bottom: 2px solid #dee2e6;
   font-size: 0.9rem;
 }
@@ -1124,7 +1124,7 @@ table td {
 .tabla-datos td {
   padding: 10px 15px;
   border-bottom: 1px solid #dee2e6;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
 }
 
