@@ -119,4 +119,90 @@ export class UIUtils {
       tableBody.appendChild(row);
     });
   }
+
+  /**
+   * Modal de Confirmación Genérico
+   * @param {Object} config { title, message, confirmText, cancelText, type }
+   * @returns {Promise<boolean>}
+   */
+  async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
+    return new Promise((resolve) => {
+      // Limpiar si hay uno previo
+      const existing = document.getElementById('modal-global-confirm');
+      if (existing) existing.remove();
+
+      const modal = document.createElement('div');
+      modal.id = 'modal-global-confirm';
+      modal.className = 'modal-confirmacion';
+      modal.style.display = 'flex';
+
+      const btnClass = type === 'danger' ? 'btn-eliminar' : 'btn-primario';
+
+      modal.innerHTML = `
+        <div class="modal-confirmacion-contenido">
+          <div class="modal-confirmacion-header">
+            <h3>${title}</h3>
+          </div>
+          <div class="modal-confirmacion-body">
+            <p>${message}</p>
+          </div>
+          <div class="modal-confirmacion-footer">
+            <button id="modal-btn-cancel" class="btn btn-terciario">${cancelText}</button>
+            <button id="modal-btn-confirm" class="btn ${btnClass}">${confirmText}</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // Eventos
+      const close = (result) => {
+        modal.remove();
+        resolve(result);
+      };
+
+      document.getElementById('modal-btn-cancel').onclick = () => close(false);
+      document.getElementById('modal-btn-confirm').onclick = () => close(true);
+      modal.onclick = (e) => { if (e.target === modal) close(false); };
+    });
+  }
+
+  /**
+   * Modal de Edición Dinámico
+   * @param {String} title Título del modal
+   * @param {String} htmlBody Contenido HTML del formulario
+   * @param {Function} onSave Callback al presionar guardar
+   */
+  showCustomModal(title, htmlBody, onSave) {
+    const existing = document.getElementById('modal-custom-form');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-custom-form';
+    modal.className = 'modal-confirmacion';
+    modal.style.display = 'flex';
+
+    modal.innerHTML = `
+      <div class="modal-confirmacion-contenido" style="min-width: 500px;">
+        <div class="modal-confirmacion-header">
+          <h3>${title}</h3>
+        </div>
+        <div class="modal-confirmacion-body">
+          ${htmlBody}
+        </div>
+        <div class="modal-confirmacion-footer">
+          <button id="modal-custom-cancel" class="btn btn-terciario">Cerrar</button>
+          <button id="modal-custom-save" class="btn btn-primario">Guardar Cambios</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modal-custom-cancel').onclick = () => modal.remove();
+    document.getElementById('modal-custom-save').onclick = () => {
+      const formData = onSave(modal); // Pasamos el modal para que el manager extraiga los datos
+      if (formData) modal.remove();
+    };
+  }
 }

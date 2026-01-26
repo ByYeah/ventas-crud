@@ -291,26 +291,47 @@ export class EdicionesManager {
     }
 
     async prepararEliminacion(id) {
-        const confirmed = await this.ui.showConfirm(`¿Estás seguro de eliminar el registro con ID ${id}?`);
-        if (confirmed) await this.eliminarRegistro(id);
+    const confirmado = await this.ui.showConfirm({
+        title: '¿Eliminar Registro?',
+        message: `Esta acción no se puede deshacer. ID del registro: ${id}`,
+        confirmText: 'Eliminar definitivamente',
+        type: 'danger' // Cambiará el color del botón
+    });
+
+    if (confirmado) {
+        try {
+            this.ui.showLoading();
+            const response = await this.api.deleteVenta(id);
+            if (response.status === 'success') {
+                this.ui.showAlert('Registro eliminado', 'success');
+                this.buscarEdiciones(); // Recargar tabla
+            }
+        } catch (error) {
+            this.ui.showAlert('Error al eliminar', 'error');
+        } finally {
+            this.ui.hideLoading();
+        }
     }
+}
 
     async eliminarRegistro(id) {
         try {
-            this.ui.showLoading();
-            await this.api.deleteVenta(id);
-            this.ui.hideLoading();
+            this.elements.loadingOverlay.style.display = 'flex'; // Mostrar loader local
+            await this.api.deleteVenta(id); // Usar la función de la API
+            this.elements.loadingOverlay.style.display = 'none'; // Ocultar loader local
             this.ui.showAlert('Registro eliminado exitosamente.', 'success');
+            // Actualizar la lista local y la vista
             this.registros = this.registros.filter(r => r.id !== id);
             this.filteredRegistros = this.filteredRegistros.filter(r => r.id !== id);
-            this.renderizarRegistros();
-            this.updatePaginationControls();
+            this.renderizarRegistros(); // Refresca la tabla
+            this.updatePaginationControls(); // Actualiza los botones de paginación
         } catch (error) {
             console.error('Error al eliminar registro:', error);
-            this.ui.hideLoading();
-            this.ui.showAlert('Error al eliminar el registro.', 'error');
+            this.elements.loadingOverlay.style.display = 'none'; // Ocultar loader local
+            this.ui.showAlert('Error al eliminar el registro: ' + (error.message || 'Error desconocido.'), 'error');
         }
     }
+
 
     scheduleDataCleanup() {
         this.clearCleanupTimeout();
@@ -332,11 +353,5 @@ export class EdicionesManager {
         if (this.elements.tableBody) this.elements.tableBody.innerHTML = '';
         if (this.elements.chipsContainer) this.elements.chipsContainer.innerHTML = '';
         if (this.elements.paginaActual) this.elements.paginaActual.textContent = '1';
-
-        // Opcional : Limpiar filtros
-        // this.elements.fechaInicio.value = '';
-        // this.elements.fechaFin.value = '';
-        // this.elements.filtroTipoProducto.value = '';
-        // this.elements.filtroReferencia.value = '';
     }
 }
