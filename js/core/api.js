@@ -147,8 +147,6 @@ export class ApiService {
   }
 
   async deleteVenta(id) {
-    // Construimos la URL con el parámetro 'path=eliminar' y el 'id'
-    // Importante: Usar CONFIG.GAS_URL que es la que ya tienes probada
     const gasUrl = CONFIG.GAS_URL;
     const targetUrl = `${gasUrl}?path=eliminar&id=${encodeURIComponent(id)}`;
 

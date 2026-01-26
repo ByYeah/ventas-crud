@@ -280,7 +280,7 @@ export class RegistrosManager {
           fecha: this.formatDate(item[6]), // Formatear para mostrar
           fechaISO: fechaISO, // Fecha ISO para comparaciones
           hora: this.formatTime(item[7]),
-          liquidado: item[8] || 'No'
+          liquidado: item[8] !== undefined && item[8] !== null ? item[8] : 'No'
         };
       });
 
@@ -327,7 +327,11 @@ export class RegistrosManager {
     registrosPagina.forEach(registro => {
       const row = document.createElement('tr');
 
-      if (registro.liquidado === 'Si') {
+      // Normalización rápida para la clase CSS
+      const esLiquidado = registro.liquidado &&
+        registro.liquidado.toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === 'si';
+
+      if (esLiquidado) {
         row.classList.add('fila-liquidada');
       }
 
@@ -419,16 +423,25 @@ export class RegistrosManager {
   aplicarFiltrosLocales() {
     let filtrados = [...this.registros];
 
-    // Filtro por productos seleccionados (múltiples)
+    // Filtro por productos seleccionados
     if (this.filtrosProductoSeleccionados.size > 0) {
       const productos = Array.from(this.filtrosProductoSeleccionados);
       filtrados = filtrados.filter(reg => productos.includes(reg.producto));
     }
 
-    // Filtro por estado (liquidado / sin-liquidar)
     if (this.filtroEstadoSeleccionado) {
-      const esperado = this.filtroEstadoSeleccionado === 'liquidado' ? 'Si' : 'No';
-      filtrados = filtrados.filter(reg => reg.liquidado === esperado);
+      filtrados = filtrados.filter(reg => {
+        // Normalización extrema: quitamos espacios, pasamos a minúsculas y quitamos tildes
+        const valorStr = (reg.liquidado || 'No').toString().trim().toLowerCase();
+        const valorNormalizado = valorStr.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        if (this.filtroEstadoSeleccionado === 'liquidado') {
+          // Ahora comparamos contra "si" (sin tilde) porque normalizamos el origen
+          return valorNormalizado === 'si' || valorNormalizado === 'true';
+        } else {
+          return valorNormalizado === 'no' || valorNormalizado === 'false' || valorNormalizado === '';
+        }
+      });
     }
 
     this.filteredRegistros = filtrados;
