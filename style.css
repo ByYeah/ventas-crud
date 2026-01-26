@@ -1348,6 +1348,7 @@ table td {
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  pointer-events: all !important;
 }
 
 .modal-confirmacion-contenido {
@@ -1357,6 +1358,8 @@ table td {
   min-width: 400px;
   max-width: 90%;
   animation: modalSlideIn 0.3s ease-out;
+  position: relative;
+    z-index: 10001;
 }
 
 @keyframes modalSlideIn {
@@ -1644,4 +1647,17 @@ table td {
 .pagination-controls-bottom .btn-pagination:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn-danger, .btn-eliminar { /* Ajusta '.btn-danger' si usas otro nombre */
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger:hover, .btn-eliminar:hover { /* Ajusta '.btn-danger:hover' si usas otro nombre */
+  background-color: #c82333;
 }
