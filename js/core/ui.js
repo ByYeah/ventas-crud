@@ -229,4 +229,39 @@ export class UIUtils {
       if (result === true) modal.remove();
     };
   }
+
+  /**
+   * Modal de Información con contenido HTML
+   * @param {String} title Título del modal
+   * @param {String} htmlBody Contenido HTML del modal
+   * @param {String} closeText Texto del botón para cerrar
+   */
+  showInfoModal(title, htmlBody, closeText = 'Cerrar') {
+    const existing = document.getElementById('modal-info-custom');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-info-custom';
+    modal.className = 'modal-confirmacion';
+    modal.style.display = 'flex';
+
+    modal.innerHTML = `
+      <div class="modal-confirmacion-contenido" style="min-width: 500px;">
+        <div class="modal-confirmacion-header">
+          <h3>${title}</h3>
+        </div>
+        <div class="modal-confirmacion-body">
+          ${htmlBody}
+        </div>
+        <div class="modal-confirmacion-footer">
+          <button id="modal-info-close" class="btn btn-terciario">${closeText}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modal-info-close').onclick = () => modal.remove();
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  }
 }
