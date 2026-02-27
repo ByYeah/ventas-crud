@@ -14,74 +14,9 @@ export class VentasManager {
     this.initElements();
     this.bindEvents();
     this.setupFormValidation();
-    this.crearModalConfirmacion();
   }
 
-  // Crear modal de confirmación personalizado
-  crearModalConfirmacion() {
-    // Verificar si ya existe
-    if (document.getElementById('modal-confirmacion-venta')) return;
 
-    const modal = document.createElement('div');
-    modal.id = 'modal-confirmacion-venta';
-    modal.className = 'modal-confirmacion';
-    modal.style.display = 'none';
-    modal.innerHTML = `
-      <div class="modal-confirmacion-contenido">
-        <div class="modal-confirmacion-header">
-          <h3>Confirmar Venta</h3>
-        </div>
-        <div class="modal-confirmacion-body">
-          <p id="modal-texto-venta">¿Está seguro de que desea registrar esta venta?</p>
-        </div>
-        <div class="modal-confirmacion-footer">
-          <button id="btn-modal-cancelar-venta" class="btn btn-terciario">Cancelar</button>
-          <button id="btn-modal-aceptar-venta" class="btn btn-primario">Aceptar</button>
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(modal);
-
-    // Eventos para el modal
-    document.getElementById('btn-modal-cancelar-venta')?.addEventListener('click', () => {
-      this.cerrarModalConfirmacion();
-    });
-    
-    document.getElementById('btn-modal-aceptar-venta')?.addEventListener('click', () => {
-      this.procesarVentaReal();
-      this.cerrarModalConfirmacion();
-    });
-
-    // Cerrar al hacer clic fuera
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        this.cerrarModalConfirmacion();
-      }
-    });
-  }
-
-  // Mostrar modal de confirmación
-  mostrarModalConfirmacion(texto) {
-    const modal = document.getElementById('modal-confirmacion-venta');
-    const textoElement = document.getElementById('modal-texto-venta');
-    
-    if (textoElement) {
-      textoElement.textContent = texto;
-    }
-    
-    if (modal) {
-      modal.style.display = 'flex';
-    }
-  }
-
-  // Cerrar modal de confirmación
-  cerrarModalConfirmacion() {
-    const modal = document.getElementById('modal-confirmacion-venta');
-    if (modal) {
-      modal.style.display = 'none';
-    }
-  }
 
   initElements() {
     this.elements = {
@@ -178,16 +113,23 @@ export class VentasManager {
   async handleFormSubmit() {
     const nuevaVenta = this.createVentaFromForm();
 
-    // Validar campos antes de mostrar confirmación
     if (!nuevaVenta.producto || !nuevaVenta.precio) {
       this.ui.showAlert('Por favor complete los campos obligatorios', 'warning');
       return;
     }
 
-    // Mostrar modal de confirmación
-    const textoConfirmacion = `¿Confirmar venta de "${nuevaVenta.producto}" por ${this.utils.formatCurrency(nuevaVenta.precioFinal)}?`;
-    this.mostrarModalConfirmacion(textoConfirmacion);
-  }
+    // USANDO EL NUEVO UIUtils
+    const confirmado = await this.ui.showConfirm({
+      title: 'Confirmar Venta',
+      message: `¿Desea registrar "${nuevaVenta.producto}" por ${this.utils.formatCurrency(nuevaVenta.precioFinal)}?`,
+      confirmText: 'Vender',
+      type: 'primary'
+    });
+
+    if (confirmado) {
+      this.procesarVentaReal(nuevaVenta);
+    }
+}
 
   // Procesar venta real (después de aceptar en modal)
   async procesarVentaReal() {

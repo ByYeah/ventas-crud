@@ -119,4 +119,149 @@ export class UIUtils {
       tableBody.appendChild(row);
     });
   }
+
+  /**
+   * Modal de Confirmación Genérico
+   * @param {Object} config { title, message, confirmText, cancelText, type }
+   * @returns {Promise<boolean>}
+   */
+  async showConfirm({ title = 'Confirmar', message = '¿Estás seguro?', confirmText = 'Aceptar', cancelText = 'Cancelar', type = 'primary' }) {
+    return new Promise((resolve) => {
+      const existing = document.getElementById('modal-global-confirm');
+      if (existing) existing.remove();
+
+      const modal = document.createElement('div');
+      modal.id = 'modal-global-confirm';
+      modal.className = 'modal-confirmacion';
+      modal.style.display = 'flex';
+
+      // Definir color del botón según el tipo
+      const btnClass = type === 'danger' ? 'background-color: #dc3545;' : 'background-color: #007bff;';
+
+      modal.innerHTML = `
+        <div class="modal-confirmacion-contenido" style="max-width: 90%; width: 450px;">
+          <div class="modal-confirmacion-header" style="padding: 15px; border-bottom: 1px solid #eee;">
+            <h3 style="margin: 0;">${title}</h3>
+          </div>
+          <div class="modal-confirmacion-body" style="padding: 20px; min-height: 80px;">
+            <p style="margin: 0; color: #444; line-height: 1.5;">${message}</p>
+          </div>
+          <div class="modal-confirmacion-footer" style="
+            padding: 15px; 
+            display: flex; 
+            justify-content: flex-end; 
+            gap: 10px; 
+            border-top: 1px solid #eee;
+            flex-wrap: wrap; 
+          ">
+            <button id="modal-btn-cancel" class="btn" style="
+              padding: 10px 20px; 
+              cursor: pointer; 
+              background: #6c757d; 
+              color: white; 
+              border: none; 
+              border-radius: 4px;
+              min-width: 100px;
+            ">${cancelText}</button>
+            
+            <button id="modal-btn-confirm" class="btn" style="
+              padding: 10px 20px; 
+              cursor: pointer; 
+              ${btnClass} 
+              color: white; 
+              border: none; 
+              border-radius: 4px;
+              min-width: 120px;
+              white-space: nowrap;
+            ">${confirmText}</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      const close = (result) => {
+        modal.remove();
+        resolve(result);
+      };
+
+      document.getElementById('modal-btn-cancel').onclick = () => close(false);
+      document.getElementById('modal-btn-confirm').onclick = () => close(true);
+      modal.onclick = (e) => { if (e.target === modal) close(false); };
+    });
+  }
+
+  /**
+   * Modal de Edición Dinámico
+   * @param {String} title Título del modal
+   * @param {String} htmlBody Contenido HTML del formulario
+   * @param {Function} onSave Callback al presionar guardar
+   */
+  showCustomModal(title, htmlBody, onSave) {
+    const existing = document.getElementById('modal-custom-form');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-custom-form';
+    modal.className = 'modal-confirmacion';
+    modal.style.display = 'flex';
+
+    modal.innerHTML = `
+      <div class="modal-confirmacion-contenido" style="min-width: 500px;">
+        <div class="modal-confirmacion-header">
+          <h3>${title}</h3>
+        </div>
+        <div class="modal-confirmacion-body">
+          ${htmlBody}
+        </div>
+        <div class="modal-confirmacion-footer">
+          <button id="modal-custom-cancel" class="btn btn-terciario">Cerrar</button>
+          <button id="modal-custom-save" class="btn btn-primario">Guardar Cambios</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modal-custom-cancel').onclick = () => modal.remove();
+    document.getElementById('modal-custom-save').onclick = async () => {
+      const result = await onSave(modal); // Esperamos a que el manager confirme
+      if (result === true) modal.remove();
+    };
+  }
+
+  /**
+   * Modal de Información con contenido HTML
+   * @param {String} title Título del modal
+   * @param {String} htmlBody Contenido HTML del modal
+   * @param {String} closeText Texto del botón para cerrar
+   */
+  showInfoModal(title, htmlBody, closeText = 'Cerrar') {
+    const existing = document.getElementById('modal-info-custom');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-info-custom';
+    modal.className = 'modal-confirmacion';
+    modal.style.display = 'flex';
+
+    modal.innerHTML = `
+      <div class="modal-confirmacion-contenido" style="min-width: 500px;">
+        <div class="modal-confirmacion-header">
+          <h3>${title}</h3>
+        </div>
+        <div class="modal-confirmacion-body">
+          ${htmlBody}
+        </div>
+        <div class="modal-confirmacion-footer">
+          <button id="modal-info-close" class="btn btn-terciario">${closeText}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modal-info-close').onclick = () => modal.remove();
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  }
 }

@@ -713,7 +713,6 @@ table td {
   display: none;
   position: absolute;
   top: calc(100% + 8px);
-  /* sitúa el dropdown justo debajo del botón */
   left: 0;
   right: auto;
   background-color: #f9f9f9;
@@ -722,14 +721,8 @@ table td {
   white-space: nowrap;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   z-index: 1000;
-  /* más alto para que aparezca sobre otras capas */
   border-radius: 6px;
   padding: 6px 0;
-  overflow: hidden;
-  max-height: 60vh;
-  /* evita que el dropdown crezca demasiado */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .filtro-dropdown-container:hover .dropdown-content,
@@ -806,8 +799,9 @@ table td {
 
 /* Fila con registro ya liquidado */
 .fila-liquidada {
-  background-color: rgba(255, 200, 200, 0.2);
-  /* Rojo muy tenue y semitransparente */
+  background-color: #e8f5e9 !important;
+  color: #2e7d32;
+  font-style: italic;
 }
 
 .filtros-aplicados {
@@ -910,14 +904,14 @@ table td {
 }
 
 .encabezado-seccion h2 {
-  color: #2c3e50;
+  color: #000000;
   margin: 0 0 5px 0;
   font-size: 1.8rem;
   font-weight: 600;
 }
 
 .encabezado-seccion p {
-  color: #6c757d;
+  color: #000000;
   margin: 0;
   font-size: 1rem;
 }
@@ -943,7 +937,7 @@ table td {
 
 .filtro-liquidacion h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -964,7 +958,7 @@ table td {
 
 .filtro-item label {
   font-weight: 500;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
 }
 
@@ -987,7 +981,7 @@ table td {
   padding: 6px 10px;
   border-radius: 4px;
   font-size: 0.9rem;
-  color: #495057;
+  color: #000000;
   border: 1px solid #ced4da;
   text-align: center;
   min-width: 100px;
@@ -1008,7 +1002,7 @@ table td {
 
 .card-resumen h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -1026,12 +1020,12 @@ table td {
 }
 
 .resumen-item span {
-  color: #6c757d;
+  color: #000000;
   font-weight: 500;
 }
 
 .resumen-item strong {
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.2rem;
   font-weight: 600;
 }
@@ -1047,7 +1041,7 @@ table td {
 
 .vista-previa-liquidacion h4 {
   margin: 0 0 15px 0;
-  color: #2c3e50;
+  color: #000000;
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -1064,7 +1058,7 @@ table td {
 }
 
 .contador-vista-previa span {
-  color: #495057;
+  color: #000000;
   font-weight: 500;
 }
 
@@ -1080,7 +1074,7 @@ table td {
 
 .registros-por-pagina label {
   font-weight: 500;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
   white-space: nowrap;
 }
@@ -1096,7 +1090,7 @@ table td {
 .registros-por-pagina span {
   white-space: nowrap;
   font-size: 0.9rem;
-  color: #495057;
+  color: #000000;
 }
 
 /* Tabla de datos */
@@ -1122,7 +1116,7 @@ table td {
   padding: 12px 15px;
   text-align: left;
   font-weight: 600;
-  color: #495057;
+  color: #000000;
   border-bottom: 2px solid #dee2e6;
   font-size: 0.9rem;
 }
@@ -1130,7 +1124,7 @@ table td {
 .tabla-datos td {
   padding: 10px 15px;
   border-bottom: 1px solid #dee2e6;
-  color: #495057;
+  color: #000000;
   font-size: 0.9rem;
 }
 
@@ -1348,6 +1342,7 @@ table td {
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  pointer-events: all !important;
 }
 
 .modal-confirmacion-contenido {
@@ -1357,6 +1352,8 @@ table td {
   min-width: 400px;
   max-width: 90%;
   animation: modalSlideIn 0.3s ease-out;
+  position: relative;
+  z-index: 10001;
 }
 
 @keyframes modalSlideIn {
@@ -1513,14 +1510,14 @@ table td {
   box-shadow: 0 2px 3px -1px rgba(0, 0, 0, 0.1);
 }
 
-.table-container #tabla-ediciones th:last-child { 
+.table-container #tabla-ediciones th:last-child {
   text-align: center;
 }
 
 .acciones-cell {
   display: flex;
   justify-content: space-evenly;
-  gap: 10px; 
+  gap: 10px;
   align-items: center;
   position: relative;
 }
@@ -1532,9 +1529,9 @@ table td {
   left: 50%;
   top: 20%;
   bottom: 20%;
-  width: 1px; 
-  background-color: #ccc; 
-  transform: translateX(-50%); 
+  width: 1px;
+  background-color: #ccc;
+  transform: translateX(-50%);
   z-index: 1;
 }
 
@@ -1644,4 +1641,21 @@ table td {
 .pagination-controls-bottom .btn-pagination:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn-danger,
+.btn-eliminar {
+  /* Ajusta '.btn-danger' si usas otro nombre */
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-danger:hover,
+.btn-eliminar:hover {
+  /* Ajusta '.btn-danger:hover' si usas otro nombre */
+  background-color: #c82333;
 }
