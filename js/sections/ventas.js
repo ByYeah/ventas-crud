@@ -101,7 +101,6 @@ export class VentasManager {
 
       this.ui.hideLoading();
     } catch (error) {
-      console.error('Error cargando ventas:', error);
       this.ui.showAlert('Error al cargar ventas', 'error');
       this.ui.hideLoading();
 
@@ -337,7 +336,6 @@ export class VentasManager {
           results.failed.push(venta);
         }
       } catch (error) {
-        console.error('Error sincronizando venta pendiente:', error);
         results.failed.push(venta);
       }
     }

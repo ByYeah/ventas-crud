@@ -23,7 +23,8 @@ class App {
       registros: new RegistrosManager(this),
       referencias: new ReferenciasManager(this),
       liquidaciones: new LiquidacionesManager(this),
-      ediciones: new EdicionesManager(this)
+      ediciones: new EdicionesManager(this),
+      referencias: new ReferenciasManager(this)
     };
 
     // Inicializar servicios

@@ -34,13 +34,15 @@ export class RegistrosManager {
       totalRegistros: document.getElementById('total-registros'),
       chipsContainer: document.querySelector('.chips-container'),
       loadingOverlay: document.getElementById('loading-overlay-registros'),
-      totalVendido: document.getElementById('total-vendido')
+      totalVendido: document.getElementById('total-vendido'),
+      btnExportar: document.getElementById('btn-exportar')
     };
   }
 
   bindEvents() {
     this.elements.btnBuscar.addEventListener('click', () => this.filtrarRegistros());
     this.elements.btnLimpiar.addEventListener('click', () => this.limpiarFiltros());
+    this.elements.btnExportar?.addEventListener('click', () => this.exportToCSV());
     this.elements.btnAnterior.addEventListener('click', () => this.cambiarPagina(-1));
     this.elements.btnSiguiente.addEventListener('click', () => this.cambiarPagina(1));
 
@@ -193,7 +195,6 @@ export class RegistrosManager {
   filtrarPorFechaEnFrontend(data, startDateStr, endDateStr) {
     // Validar que data sea un array
     if (!Array.isArray(data)) {
-      console.warn('Data no es un array:', data);
       return [];
     }
 
@@ -290,7 +291,6 @@ export class RegistrosManager {
       this.elements.loadingOverlay.style.display = 'none';
       this.ui.hideLoading();
     } catch (error) {
-      console.error('Error filtrando registros:', error);
       this.ui.showAlert('Error al filtrar registros', 'error');
       this.elements.loadingOverlay.style.display = 'none';
       this.ui.hideLoading();
@@ -384,29 +384,52 @@ export class RegistrosManager {
   }
 
   exportToCSV() {
-    if (this.filteredRegistros.length === 0) {
+    // Usar los registros filtrados (con filtros de producto/estado aplicados)
+    const datosParaExportar = this.filteredRegistros.length > 0
+      ? this.filteredRegistros
+      : this.registros;
+
+    if (datosParaExportar.length === 0) {
       this.ui.showAlert('No hay datos para exportar', 'warning');
       return;
     }
 
-    const headers = ['ID', 'Producto', 'Referencia', 'Descripción', 'Precio', 'Precio Final', 'Fecha', 'Hora'];
+    // Encabezados con BOM para compatibilidad con Excel (caracteres UTF-8)
+    const BOM = '\uFEFF';
+    const headers = ['ID', 'Producto', 'Referencia', 'Descripción', 'Precio', 'Precio Final', 'Fecha', 'Hora', 'Liquidado'];
+
+    // Función helper para escapar campos CSV correctamente
+    const escapeCSV = (value) => {
+      if (value === null || value === undefined) return '""';
+      const str = String(value);
+      // Si contiene comas, comillas o saltos de línea, envolver en comillas y escapar comillas internas
+      if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    // Construir filas CSV
     const csvRows = [
-      headers.join(','),
-      ...this.filteredRegistros.map(registro =>
+      headers.join(','), // Fila de encabezados
+      ...datosParaExportar.map(registro =>
         [
-          registro.id,
-          `"${registro.producto.replace(/"/g, '""')}"`,
-          `"${registro.referencia.replace(/"/g, '""')}"`,
-          `"${(registro.descripcion || '').replace(/"/g, '""')}"`,
-          registro.precio,
-          registro.precioFinal,
-          registro.fecha,  // Ya viene formateado
-          registro.hora || ''
+          escapeCSV(registro.id),
+          escapeCSV(registro.producto),
+          escapeCSV(registro.referencia || ''),
+          escapeCSV(registro.descripcion || ''),
+          escapeCSV(registro.precio),
+          escapeCSV(registro.precioFinal),
+          escapeCSV(registro.fecha),
+          escapeCSV(registro.hora || ''),
+          escapeCSV(registro.liquidado || 'No') // 👈 Agregamos columna Liquidado
         ].join(',')
       )
     ];
 
-    const csvContent = csvRows.join('\n');
+    const csvContent = BOM + csvRows.join('\n');
+
+    // Crear blob con encoding UTF-8 explícito
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -414,10 +437,19 @@ export class RegistrosManager {
     link.setAttribute('href', url);
     link.setAttribute('download', `registros_${new Date().toISOString().slice(0, 10)}.csv`);
     link.style.visibility = 'hidden';
+    link.style.position = 'absolute';
+    link.style.top = '-9999px';
 
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+
+    // Limpieza segura
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    this.ui.showAlert(`✅ Exportados ${datosParaExportar.length} registros`, 'success');
   }
 
   aplicarFiltrosLocales() {
