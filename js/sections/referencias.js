@@ -58,9 +58,9 @@ export class ReferenciasManager {
 
       const id = btn.dataset.id;
 
-      if (btn.classList.contains('btn-edit')) {
+      if (btn.classList.contains('btn-editar')) {
         this.abrirModalEdicion(id);
-      } else if (btn.classList.contains('btn-delete')) {
+      } else if (btn.classList.contains('btn-eliminar')) {
         this.confirmarEliminacion(id);
       }
     });
@@ -399,12 +399,12 @@ export class ReferenciasManager {
         <td class="text-end">${this.utils.formatCurrency(ref.precioVenta)}</td>
         <td>${this.escapeHtml(ref.notas || '-')}</td>
         <td>${this.formatDateLocal(ref.updatedAt)}</td>
-        <td class="text-end">
-          <button class="btn btn-action btn-edit" data-id="${this.escapeHtml(ref.id)}" title="Editar">
-            ✏️
+        <td class="acciones-cell">
+          <button class="btn btn-editar" data-id="${this.escapeHtml(ref.id)}" title="Editar">
+            ${String.fromCodePoint(0x270F)}
           </button>
-          <button class="btn btn-action btn-delete" data-id="${this.escapeHtml(ref.id)}" title="Eliminar">
-            🗑️
+          <button class="btn btn-eliminar" data-id="${this.escapeHtml(ref.id)}" title="Eliminar">
+            ${String.fromCodePoint(0x1F5D1)}
           </button>
         </td>
       </tr>
