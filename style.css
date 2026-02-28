@@ -1765,3 +1765,7 @@ table td {
 .text-end {
   text-align: right;
 }
+
+.empty-state.hidden {
+  display: none !important;
+}

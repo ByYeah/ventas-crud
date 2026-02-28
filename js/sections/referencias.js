@@ -326,28 +326,41 @@ export class ReferenciasManager {
     this.mostrarLoading(true);
 
     try {
-      console.log('[Referencias] Solicitando datos al backend...');
+      console.log('[Referencias] Solicitando datos...');
 
       const response = await this.api.post('/referencias', {
         action: 'list'
       });
 
-      console.log('[Referencias] Respuesta:', response);
+      console.log('[Referencias] Response:', response);
+      console.log('[Referencias] response.data:', response.data);
+      console.log('[Referencias] Es array:', Array.isArray(response.data));
+      console.log('[Referencias] Cantidad:', response.data?.length);
 
       if (response && response.status === 'success' && Array.isArray(response.data)) {
         this.referencias = response.data;
-        console.log(`[Referencias] ${this.referencias.length} referencias cargadas`);
+        console.log('[Referencias] Datos asignados:', this.referencias.length);
+        console.log('[Referencias] this.referencias:', this.referencias);
 
         this.renderTable();
+        console.log('[Referencias] renderTable() llamado');
+
         this.actualizarContador();
+        console.log('[Referencias] actualizarContador() llamado');
+
         this.mostrarEstadoVacio();
+        console.log('[Referencias] mostrarEstadoVacio() llamado');
+        console.log('[Referencias] this.referencias.length:', this.referencias.length);
+        console.log('[Referencias] emptyState:', this.elements.emptyState);
+        console.log('[Referencias] emptyState.classList:', this.elements.emptyState?.classList);
+
       } else {
-        throw new Error('Respuesta inválida del servidor');
+        throw new Error('Respuesta inválida');
       }
 
     } catch (error) {
-      console.error('[Referencias] Error cargando datos:', error);
-      this.ui.showAlert('Error al cargar referencias: ' + error.message, 'error');
+      console.error('[Referencias] Error:', error);
+      this.ui.showAlert('Error: ' + error.message, 'error');
       this.referencias = [];
       this.renderTable();
     } finally {
@@ -367,16 +380,37 @@ export class ReferenciasManager {
       )
       : this.referencias;
 
+    // Actualizar contador primero
+    this.actualizarContador(datosFiltrados.length);
+
+    // Si no hay datos, mostrar mensaje en la tabla
     if (datosFiltrados.length === 0) {
       tableBody.innerHTML = `
         <tr>
           <td colspan="7" style="text-align:center; color:#6c757d; padding: 2rem;">
-            ${this.filtroActual ? 'No se encontraron resultados para tu búsqueda' : 'No hay referencias registradas'}
+            ${this.filtroActual
+          ? '🔍 No se encontraron resultados para "' + this.filtroActual + '"'
+          : '📦 No hay referencias registradas. ¡Comienza agregando una nueva!'}
           </td>
         </tr>
       `;
+
+      // Mostrar estado vacío SOLO si no hay datos y no hay filtro
+      if (this.elements.emptyState) {
+        if (this.referencias.length === 0 && !this.filtroActual) {
+          this.elements.emptyState.classList.remove('hidden');
+          tableBody.parentElement?.classList.add('hidden');
+        } else {
+          this.elements.emptyState.classList.add('hidden');
+          tableBody.parentElement?.classList.remove('hidden');
+        }
+      }
       return;
     }
+
+    // Hay datos: renderizar filas
+    this.elements.emptyState?.classList.add('hidden');
+    tableBody.parentElement?.classList.remove('hidden');
 
     tableBody.innerHTML = datosFiltrados.map(ref => `
       <tr data-id="${this.escapeHtml(ref.id)}">
@@ -396,15 +430,16 @@ export class ReferenciasManager {
         </td>
       </tr>
     `).join('');
-
-    this.actualizarContador(datosFiltrados.length);
   }
 
   mostrarLoading(mostrando) {
-    const { tableBody } = this.elements;
+    const { tableBody, emptyState } = this.elements;
     if (!tableBody) return;
 
     if (mostrando) {
+      // Ocultar estado vacío mientras carga
+      emptyState?.classList.add('hidden');
+
       tableBody.innerHTML = `
         <tr>
           <td colspan="7" style="text-align:center; color:#6c757d; padding: 2rem;">
@@ -419,16 +454,35 @@ export class ReferenciasManager {
   }
 
   mostrarEstadoVacio() {
-    const { emptyState, tableBody } = this.elements;
-    if (!emptyState || !tableBody) return;
-
-    if (this.referencias.length === 0) {
-      emptyState.classList.remove('hidden');
-      tableBody.parentElement?.classList.add('hidden');
-    } else {
-      emptyState.classList.add('hidden');
-      tableBody.parentElement?.classList.remove('hidden');
+    const { emptyState } = this.elements;
+    if (!emptyState) {
+      console.warn('[Referencias] emptyState no existe en elements');
+      return;
     }
+
+    console.log('[mostrarEstadoVacio] this.referencias.length:', this.referencias.length);
+    console.log('[mostrarEstadoVacio] emptyState antes:', emptyState.classList.contains('hidden') ? 'OCULTO' : 'VISIBLE');
+
+    // Solo mostrar estado vacío si NO hay referencias
+    if (this.referencias.length === 0) {
+      console.log('[mostrarEstadoVacio] Mostrando empty state (no hay datos)');
+      emptyState.classList.remove('hidden');
+
+      // Ocultar tabla
+      if (this.elements.tableBody?.parentElement) {
+        this.elements.tableBody.parentElement.classList.add('hidden');
+      }
+    } else {
+      console.log('[mostrarEstadoVacio] Ocultando empty state (hay datos)');
+      emptyState.classList.add('hidden');
+
+      // Mostrar tabla
+      if (this.elements.tableBody?.parentElement) {
+        this.elements.tableBody.parentElement.classList.remove('hidden');
+      }
+    }
+
+    console.log('[mostrarEstadoVacio] emptyState después:', emptyState.classList.contains('hidden') ? 'OCULTO' : 'VISIBLE');
   }
 
   actualizarContador(cantidad = null) {
@@ -437,6 +491,7 @@ export class ReferenciasManager {
 
     const total = cantidad !== null ? cantidad : this.referencias.length;
     countLabel.textContent = `${total} referencia${total !== 1 ? 's' : ''} registrada${total !== 1 ? 's' : ''}`;
+    countLabel.classList.remove('hidden');
   }
 
   formatDateLocal(dateString) {
