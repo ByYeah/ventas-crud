@@ -78,6 +78,7 @@ export class ReferenciasManager {
     const formHtml = this.generarFormularioHTML();
 
     this.ui.showCustomModal('➕ Nueva Referencia', formHtml, async (modal) => {
+      this.bindFormatoInputs(modal);
       const formData = this.obtenerDatosFormulario(modal);
       const validacion = this.validarFormulario(formData);
 
@@ -125,6 +126,7 @@ export class ReferenciasManager {
     const formHtml = this.generarFormularioHTML(referencia);
 
     this.ui.showCustomModal('✏️ Editar Referencia', formHtml, async (modal) => {
+      this.bindFormatoInputs(modal);
       const formData = this.obtenerDatosFormulario(modal);
       const validacion = this.validarFormulario(formData);
 
@@ -172,8 +174,10 @@ export class ReferenciasManager {
               name="producto" 
               value="${this.escapeHtml(datos.producto || '')}"
               placeholder="Ej: Gorra, Camiseta..."
-              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; text-transform: capitalize;"
               required
+              data-format="producto"
+              id="input-producto"
             >
           </div>
           <div>
@@ -185,8 +189,10 @@ export class ReferenciasManager {
               name="referencia" 
               value="${this.escapeHtml(datos.referencia || '')}"
               placeholder="Ej: DL7, AM20, AA25..."
-              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+              style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; text-transform: uppercase;"
               required
+              data-format="referencia"
+              id="input-referencia"
             >
           </div>
         </div>
@@ -244,9 +250,13 @@ export class ReferenciasManager {
     const form = modal.querySelector('#form-referencia');
     if (!form) return {};
 
+    const rawProducto = form.querySelector('[name="producto"]')?.value?.trim() || '';
+    const rawReferencia = form.querySelector('[name="referencia"]')?.value?.trim() || '';
+
     return {
-      producto: form.querySelector('[name="producto"]')?.value?.trim() || '',
-      referencia: form.querySelector('[name="referencia"]')?.value?.trim() || '',
+      // Aplicar formateo como capa de seguridad
+      producto: this.formatProducto(rawProducto),
+      referencia: this.formatReferencia(rawReferencia),
       precioCompra: form.querySelector('[name="precioCompra"]')?.value || '',
       precioVenta: form.querySelector('[name="precioVenta"]')?.value || '',
       notas: form.querySelector('[name="notas"]')?.value?.trim() || ''
@@ -526,5 +536,40 @@ export class ReferenciasManager {
 
   async refresh() {
     await this.cargarReferencias();
+  }
+
+  formatProducto(value) {
+    if (!value) return '';
+    const trimmed = value.trim();
+    return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+  }
+
+  formatReferencia(value) {
+    if (!value) return '';
+    return value.trim().toUpperCase();
+  }
+
+  bindFormatoInputs(modal) {
+    const productoInput = modal.querySelector('[name="producto"]');
+    const referenciaInput = modal.querySelector('[name="referencia"]');
+
+    // Formatear producto al perder foco (blur) o al presionar Enter
+    productoInput?.addEventListener('blur', (e) => {
+      e.target.value = this.formatProducto(e.target.value);
+    });
+
+    // Formatear referencia en tiempo real (mientras escribe)
+    referenciaInput?.addEventListener('input', (e) => {
+      const cursorPos = e.target.selectionStart;
+      const originalValue = e.target.value;
+      const formattedValue = this.formatReferencia(originalValue);
+
+      // Solo actualizar si cambió para no perder el foco
+      if (originalValue !== formattedValue) {
+        e.target.value = formattedValue;
+        // Restaurar posición del cursor
+        e.target.setSelectionRange(cursorPos, cursorPos);
+      }
+    });
   }
 }
