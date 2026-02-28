@@ -130,22 +130,24 @@
         </div>
       </form>
 
-      <table id="ventasTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Referencia</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Precio Final</th>
-            <th>Fecha/Hora</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Datos dinámicos aquí -->
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table id="ventasTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Referencia</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Precio Final</th>
+              <th>Fecha/Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Datos dinámicos aquí -->
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section id="liquidaciones" class="section hidden">
@@ -263,8 +265,17 @@
             <button id="btn-add-referencia" class="btn btn-primario">
               ➕ Nueva Referencia
             </button>
-            <button id="btn-export-referencias" class="btn btn-terciario">
-              📤 Exportar CSV
+            <button id="btn-export-referencias" class="btn-export">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="icon-export">
+                <g fill="#ffffff">
+                  <path fill-rule="evenodd"
+                    d="M12 1.25c-.4142 0-.75.33579-.75.75v10.9726l-1.68056-1.9607c-.26956-.3145-.74304-.3509-1.05753-.0813-.3145.2695-.35092.743-.08135 1.0575l3.00004 3.5c.1424.1662.3505.2619.5694.2619.2189 0 .427-.0957.5694-.2619l3-3.5c.2696-.3145.2332-.788-.0813-1.0575-.3145-.2696-.788-.2332-1.0575.0813L12.75 12.9726V2c0-.41421-.3358-.75-.75-.75Z"
+                    clip-rule="evenodd" />
+                  <path
+                    d="M14.25 9v.37828c.7336-.25855 1.5812-.12918 2.2142.41339.9435.80873 1.0528 2.22913.2441 3.17263l-3 3.5c-.4275.4987-1.0515.7857-1.7083.7857-.6569 0-1.2809-.287-1.7084-.7857l-2.99997-3.5c-.8087-.9435-.69943-2.3639.24405-3.17263.633-.54257 1.48069-.67194 2.21428-.41339V9H8c-2.82843 0-4.24264 0-5.12132.87868C2 10.7574 2 12.1716 2 15v1c0 2.8284 0 4.2426.87868 5.1213C3.75736 22 5.17157 22 7.99999 22H16c2.8284 0 4.2426 0 5.1213-.8787C22 20.2426 22 18.8284 22 16v-1c0-2.8284 0-4.2426-.8787-5.12132C20.2426 9 18.8284 9 16 9h-1.75Z" />
+                </g>
+              </svg>
+              Exportar CSV
             </button>
           </div>
         </div>

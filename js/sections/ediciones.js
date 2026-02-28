@@ -214,7 +214,6 @@ export class EdicionesManager {
             // Ocultar loader
             this.elements.loadingOverlay.style.display = 'none';
         } catch (error) {
-            console.error('Error filtrando registros para ediciones:', error);
             this.ui.showAlert('Error al filtrar registros', 'error');
             this.elements.loadingOverlay.style.display = 'none';
 
@@ -358,7 +357,6 @@ export class EdicionesManager {
                 throw new Error(response.message || 'Error al actualizar');
             }
         } catch (error) {
-            console.error('Error en actualización:', error);
             this.ui.showAlert('Error: ' + error.message, 'error');
         } finally {
             // Quitamos ambos loaders
@@ -402,7 +400,6 @@ export class EdicionesManager {
             this.renderizarRegistros(); // Refresca la tabla
             this.updatePaginationControls(); // Actualiza los botones de paginación
         } catch (error) {
-            console.error('Error al eliminar registro:', error);
             this.elements.loadingOverlay.style.display = 'none'; // Ocultar loader local
             this.ui.showAlert('Error al eliminar el registro: ' + (error.message || 'Error desconocido.'), 'error');
         }

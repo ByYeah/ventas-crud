@@ -106,7 +106,6 @@ export class LiquidacionesManager {
             });
           }
         } catch (e) {
-          console.warn('Error al formatear hora:', hora);
         }
       }
     }
@@ -169,7 +168,6 @@ export class LiquidacionesManager {
       this.renderizarVistaPrevia();
 
     } catch (error) {
-      console.error('Error en calcularResumenLiquidacion:', error);
       this.ui.showAlert('Error al cargar datos', 'error');
       this.resetResumen();
       this.renderizarVistaPrevia([]);
@@ -260,14 +258,10 @@ export class LiquidacionesManager {
         return r.id.toString();
       });
 
-      console.log('IDs a enviar para liquidar:', idsParaLiquidar); // Log para depuración
-
       // Llamar al endpoint real de liquidación
       const response = await this.api.post('/liquidar', {
         ids: idsParaLiquidar
       });
-
-      console.log('Respuesta de liquidación:', response); // Log para depuración
 
       if (response.status === 'success') {
         this.ui.showAlert(`✅ ${response.actualizados} registros liquidados exitosamente`, 'success');
@@ -282,7 +276,6 @@ export class LiquidacionesManager {
       }
 
     } catch (error) {
-      console.error('Error al confirmar liquidación:', error);
       this.ui.showAlert('Error al procesar la liquidación: ' + error.message, 'error');
     } finally {
       this.ui.hideLoading();

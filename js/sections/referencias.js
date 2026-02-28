@@ -67,7 +67,6 @@ export class ReferenciasManager {
   }
 
   onSectionShow() {
-    console.log('[Referencias] Sección mostrada - cargando datos...');
     this.cargarReferencias();
   }
 
@@ -103,7 +102,6 @@ export class ReferenciasManager {
           throw new Error(response.message || 'Error al crear referencia');
         }
       } catch (error) {
-        console.error('[Referencias] Error al crear:', error);
         this.ui.showAlert('Error: ' + error.message, 'error');
         return false; // Mantener modal abierto
       } finally {
@@ -153,7 +151,6 @@ export class ReferenciasManager {
           throw new Error(response.message || 'Error al actualizar referencia');
         }
       } catch (error) {
-        console.error('[Referencias] Error al editar:', error);
         this.ui.showAlert('Error: ' + error.message, 'error');
         return false; // Mantener modal abierto para corregir
       } finally {
@@ -312,7 +309,6 @@ export class ReferenciasManager {
         throw new Error(response.message || 'Error al eliminar');
       }
     } catch (error) {
-      console.error('[Referencias] Error al eliminar:', error);
       this.ui.showAlert('Error: ' + error.message, 'error');
     } finally {
       this.ui.hideLoading();
@@ -326,40 +322,23 @@ export class ReferenciasManager {
     this.mostrarLoading(true);
 
     try {
-      console.log('[Referencias] Solicitando datos...');
 
       const response = await this.api.post('/referencias', {
         action: 'list'
       });
 
-      console.log('[Referencias] Response:', response);
-      console.log('[Referencias] response.data:', response.data);
-      console.log('[Referencias] Es array:', Array.isArray(response.data));
-      console.log('[Referencias] Cantidad:', response.data?.length);
-
       if (response && response.status === 'success' && Array.isArray(response.data)) {
         this.referencias = response.data;
-        console.log('[Referencias] Datos asignados:', this.referencias.length);
-        console.log('[Referencias] this.referencias:', this.referencias);
 
         this.renderTable();
-        console.log('[Referencias] renderTable() llamado');
-
         this.actualizarContador();
-        console.log('[Referencias] actualizarContador() llamado');
-
         this.mostrarEstadoVacio();
-        console.log('[Referencias] mostrarEstadoVacio() llamado');
-        console.log('[Referencias] this.referencias.length:', this.referencias.length);
-        console.log('[Referencias] emptyState:', this.elements.emptyState);
-        console.log('[Referencias] emptyState.classList:', this.elements.emptyState?.classList);
 
       } else {
         throw new Error('Respuesta inválida');
       }
 
     } catch (error) {
-      console.error('[Referencias] Error:', error);
       this.ui.showAlert('Error: ' + error.message, 'error');
       this.referencias = [];
       this.renderTable();
@@ -456,16 +435,11 @@ export class ReferenciasManager {
   mostrarEstadoVacio() {
     const { emptyState } = this.elements;
     if (!emptyState) {
-      console.warn('[Referencias] emptyState no existe en elements');
       return;
     }
 
-    console.log('[mostrarEstadoVacio] this.referencias.length:', this.referencias.length);
-    console.log('[mostrarEstadoVacio] emptyState antes:', emptyState.classList.contains('hidden') ? 'OCULTO' : 'VISIBLE');
-
     // Solo mostrar estado vacío si NO hay referencias
     if (this.referencias.length === 0) {
-      console.log('[mostrarEstadoVacio] Mostrando empty state (no hay datos)');
       emptyState.classList.remove('hidden');
 
       // Ocultar tabla
@@ -473,7 +447,6 @@ export class ReferenciasManager {
         this.elements.tableBody.parentElement.classList.add('hidden');
       }
     } else {
-      console.log('[mostrarEstadoVacio] Ocultando empty state (hay datos)');
       emptyState.classList.add('hidden');
 
       // Mostrar tabla
@@ -481,8 +454,6 @@ export class ReferenciasManager {
         this.elements.tableBody.parentElement.classList.remove('hidden');
       }
     }
-
-    console.log('[mostrarEstadoVacio] emptyState después:', emptyState.classList.contains('hidden') ? 'OCULTO' : 'VISIBLE');
   }
 
   actualizarContador(cantidad = null) {
