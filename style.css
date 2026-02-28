@@ -1659,3 +1659,109 @@ table td {
   /* Ajusta '.btn-danger:hover' si usas otro nombre */
   background-color: #c82333;
 }
+
+/****************** Estilos referencias *******************/
+
+/* === Sección Referencias === */
+.referencias-controles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filtro-referencias {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filtro-referencias .filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filtro-referencias input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.acciones-referencias {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#referencias-table-body tr {
+  cursor: default;
+}
+
+#referencias-table-body tr:hover {
+  background-color: #f8f9fa;
+}
+
+#referencias-table-body .btn-action {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  margin-left: 0.25rem;
+}
+
+#referencias-table-body .btn-edit {
+  background: #ffc107;
+  border: none;
+  color: #212529;
+}
+
+#referencias-table-body .btn-edit:hover {
+  background: #e0a800;
+}
+
+#referencias-table-body .btn-delete {
+  background: #dc3545;
+  border: none;
+  color: white;
+}
+
+#referencias-table-body .btn-delete:hover {
+  background: #c82333;
+}
+
+.contador-registros {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+.text-end {
+  text-align: right;
+}

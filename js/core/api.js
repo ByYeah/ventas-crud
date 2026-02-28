@@ -177,5 +177,5 @@ export class ApiService {
       console.error('Error en ApiService.updateVenta:', error);
       throw error;
     }
-  }
+  } 
 }

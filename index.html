@@ -244,7 +244,70 @@
     </section>
 
     <section id="referencias" class="section hidden">
-      <p>No disponible por ahora.</p>
+      <div id="seccion-referencias" class="seccion-contenido">
+        <div class="encabezado-seccion">
+          <h2>Gestión de Referencias</h2>
+          <p>Administra productos, referencias y precios para autocompletado en ventas</p>
+        </div>
+
+        <!-- Controles principales -->
+        <div class="referencias-controles">
+          <div class="filtro-referencias">
+            <div class="filtro-item">
+              <label>Buscar:</label>
+              <input type="text" id="search-referencias" placeholder="Producto o referencia...">
+            </div>
+          </div>
+
+          <div class="acciones-referencias">
+            <button id="btn-add-referencia" class="btn btn-primario">
+              ➕ Nueva Referencia
+            </button>
+            <button id="btn-export-referencias" class="btn btn-terciario">
+              📤 Exportar CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla de referencias -->
+        <div class="tabla-responsive">
+          <table class="tabla-datos">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Referencia</th>
+                <th class="text-end">Precio Compra</th>
+                <th class="text-end">Precio Venta</th>
+                <th>Notas</th>
+                <th>Actualizado</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="referencias-table-body">
+              <tr>
+                <td colspan="7" style="text-align:center; color:#6c757d">
+                  Cargando referencias...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Estado vacío (se muestra cuando no hay datos) -->
+        <div id="referencias-empty-state" class="empty-state hidden">
+          <div class="empty-icon">📦</div>
+          <h4>No hay referencias registradas</h4>
+          <p>Comienza agregando tu primera referencia de producto</p>
+          <button id="btn-add-referencia-empty" class="btn btn-primario">
+            ➕ Agregar Primera Referencia
+          </button>
+        </div>
+
+        <!-- Contador de registros -->
+        <div class="contador-registros">
+          <span id="referencias-count">0 referencias registradas</span>
+        </div>
+      </div>
     </section>
 
     <section id="ediciones" class="section hidden">
@@ -281,9 +344,9 @@
         </div>
 
         <div class="loading-overlay" id="loading-overlay-ediciones" style="display: none;">
-        <div class="spinner"></div>
-        <p>Cargando registros...</p>
-      </div>
+          <div class="spinner"></div>
+          <p>Cargando registros...</p>
+        </div>
 
         <div class="table-container">
           <table id="tabla-ediciones">
