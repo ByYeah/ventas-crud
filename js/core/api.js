@@ -49,11 +49,7 @@ export class ApiService {
       url += `&producto=${encodeURIComponent(params.producto)}`;
     }
 
-    console.log('Fetching URL:', url);
-
     const response = await this.fetchWithTimeout(url);
-
-    console.log('API Response:', response);
 
     // El response ya es directamente el array de datos
     if (!response || !response.data || !Array.isArray(response.data)) {
@@ -72,11 +68,7 @@ export class ApiService {
   async fetchUltimosVentas(limite = 5) {
     const url = `${this.baseUrl}?target=${encodeURIComponent(CONFIG.GAS_URL)}&path=ultimos&limite=${limite}`;
 
-    console.log('Fetching últimos URL:', url);
-
     const response = await this.fetchWithTimeout(url);
-
-    console.log('API Últimos Response:', response);
 
     if (!response || !response.data || !Array.isArray(response.data)) {
       throw new Error('Formato de respuesta no válido para últimos registros');
@@ -127,9 +119,6 @@ export class ApiService {
       body: JSON.stringify(data)
     };
 
-    console.log('POST URL:', url);
-    console.log('POST Data:', data);
-
     return await this.fetchWithTimeout(url, options);
   }
 
@@ -153,8 +142,6 @@ export class ApiService {
     // El proxy espera el target codificado
     const url = `${this.baseUrl}?target=${encodeURIComponent(targetUrl)}`;
 
-    console.log("Enviando petición de eliminación a:", url);
-
     const options = {
       method: 'POST', // Google Apps Script doPost manejará esto
       headers: {
@@ -174,7 +161,6 @@ export class ApiService {
       // Usamos el método post que ya tienes configurado en tu ApiService
       return await this.post('/update-venta', datos);
     } catch (error) {
-      console.error('Error en ApiService.updateVenta:', error);
       throw error;
     }
   } 
